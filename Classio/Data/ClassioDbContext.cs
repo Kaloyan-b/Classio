@@ -25,6 +25,64 @@ namespace Classio.Data
         {
             base.OnModelCreating(modelBuilder);
 
+
+            // Teacher - Subject
+
+            modelBuilder.Entity<Teacher>()
+                .HasOne(t => t.Subject)
+                .WithMany(s => s.Teachers)
+                .HasForeignKey(t => t.SubjectId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Class - Teacher
+            modelBuilder.Entity<Class>()
+                .HasOne(c => c.Teacher)
+                .WithMany(t => t.Classes)
+                .HasForeignKey(c => c.TeacherId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Class -> Subjects
+            modelBuilder.Entity<Subject>()
+                .HasOne(s => s.Class)
+                .WithMany(c => c.Subjects)
+                .HasForeignKey(s => s.ClassId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Grade relationships
+            modelBuilder.Entity<Grade>()
+                .HasOne(g => g.Teacher)
+                .WithMany(t => t.Grades)
+                .HasForeignKey(g => g.TeacherId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Grade>()
+                .HasOne(g => g.Student)
+                .WithMany(s => s.Grades)
+                .HasForeignKey(g => g.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Grade>()
+                .HasOne(g => g.Subject)
+                .WithMany(s => s.Grades)
+                .HasForeignKey(g => g.SubjectId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Absences
+
+            modelBuilder.Entity<Absence>()
+                .HasOne(a => a.Student)
+                .WithMany(s => s.Absences)
+                .HasForeignKey(a => a.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Absence>()
+                .HasOne(a => a.Subject)
+                .WithMany()
+                .HasForeignKey(a => a.SubjectId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            // Parent <-> Student
             modelBuilder.Entity<Student>()
                 .HasOne(s => s.Parent1)
                 .WithMany(p => p.StudentsAsParent1)
@@ -36,12 +94,8 @@ namespace Classio.Data
                 .WithMany(p => p.StudentsAsParent2)
                 .HasForeignKey(s => s.Parent2Id)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Class>()
-                .HasOne(c => c.Teacher)
-                .WithMany(t => t.Classes)
-                .HasForeignKey(c => c.TeacherId)
-                .OnDelete(DeleteBehavior.Restrict);
         }
+
+
     }
 }

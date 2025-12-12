@@ -1,0 +1,71 @@
+﻿@model Classio.ViewModels.StudentDashboardViewModel
+
+@{
+    ViewData["Title"] = "Страница на ученика";
+} 
+
+<style>
+    body {
+        background-color: #000;
+        color: white;
+    }
+
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .card {
+        background-color: #111;
+        border: 2px solid #8700ba;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 0 10px rgba(135, 0, 186, 0.15);
+    }
+
+        .card h3 {
+            color: #8700ba;
+            margin-bottom: 15px;
+        }
+
+    .grade-item, .absence-item {
+        padding: 8px;
+        background-color: #1a1a1a;
+        border-radius: 6px;
+        margin-bottom: 6px;
+        border-left: 4px solid #8700ba;
+    }
+
+    .flex-row {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .flex-col {
+        flex: 1;
+        min-width: 280px;
+    }
+
+    a.info-btn {
+        display: inline-block;
+        padding: 10px 18px;
+        background-color: #8700ba;
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        margin-top: 10px;
+        transition: 0.2s;
+    }
+
+        a.info-btn:hover {
+            background-color: #a631df;
+        }
+</style>
+
+
+<div class="dashboard-container">
+
+</div>

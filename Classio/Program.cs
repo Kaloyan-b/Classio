@@ -29,6 +29,7 @@ public class Program
             options.Password.RequireNonAlphanumeric = false;
             options.Password.RequiredLength = 6;
         })
+        .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<ClassioDbContext>()
         .AddDefaultTokenProviders()
         .AddDefaultUI();
@@ -38,6 +39,21 @@ public class Program
         builder.Services.AddRazorPages();
 
         var app = builder.Build();
+
+        // --- Role Seeding ---
+        using (var scope = app.Services.CreateScope())
+        {
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            Task.Run(async () =>
+            {
+                string[] roles = { "Student", "Parent", "Teacher" };
+                foreach (var role in roles)
+                {
+                    if (!await roleManager.RoleExistsAsync(role))
+                        await roleManager.CreateAsync(new IdentityRole(role));
+                }
+            }).GetAwaiter().GetResult();
+        }
 
         // --- Pipeline ---
         if (app.Environment.IsDevelopment())

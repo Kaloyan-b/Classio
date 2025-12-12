@@ -16,6 +16,9 @@ namespace Classio.Models
         public int StudentId { get; set; }
         [ForeignKey(nameof(StudentId))]
         public Student Student { get; set; }
+        public int TeacherId { get; set; }
+        [ForeignKey(nameof(TeacherId))]
+        public Teacher Teacher { get; set; }
 
         public int SubjectId { get; set; }
         [ForeignKey(nameof(SubjectId))]

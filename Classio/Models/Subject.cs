@@ -13,6 +13,8 @@ namespace Classio.Models
         public int? ClassId { get; set; }
         [ForeignKey(nameof(ClassId))]
         public Class? Class { get; set; } = null!;
+        public ICollection<Teacher> Teachers { get; set; } = new List<Teacher>();
+
 
         public ICollection<Grade> Grades { get; set; } = new List<Grade>();
     }

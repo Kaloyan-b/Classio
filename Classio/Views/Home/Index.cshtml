@@ -1,8 +1,39 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    @if (SignInManager.IsSignedIn(User))
+    {
+
+        var currentUser = await UserManager.GetUserAsync(User);
+        var currentRole = await UserManager.GetRolesAsync(currentUser);
+
+        <h2 class="nav-link text-black" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+            Hi, @currentUser.FirstName @currentUser.LastName!
+        </h2>
+        @if(currentRole.Contains("Student"))
+        {
+            <a class="btn btn-lg btn-primary mt-3" href="@Url.Action("Dashboard", "Student")">Go to Student Dashboard</a>
+        }
+        else if (currentRole.Contains("Parent"))
+        {
+            //?Could just display the list of all related students
+            <a class="btn btn-lg btn-primary mt-3" href="@Url.Action("Dashboard", "Parent")">Go to Parent Dashboard</a>
+        }
+        else if (currentRole.Contains("Teacher"))
+        {
+            <a class="btn btn-lg btn-primary mt-3" href="@Url.Action("Dashboard", "Teacher")">Go to Teacher Dashboard</a>
+        }
+
+    }
+    else
+    {
+        <a class="btn btn-lg btn-outline-light m-2" href="/Identity/Account/Register">Sign up!</a>
+        <a class="btn btn-lg btn-outline-light m-2" href="/Identity/Account/Login">Already have an account?</a>
+    }
 </div>

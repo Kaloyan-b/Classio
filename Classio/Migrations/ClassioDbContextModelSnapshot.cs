@@ -103,6 +103,9 @@ namespace Classio.Migrations
                     b.Property<int>("SubjectId")
                         .HasColumnType("int");
 
+                    b.Property<int>("TeacherId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
@@ -115,6 +118,8 @@ namespace Classio.Migrations
 
                     b.HasIndex("SubjectId");
 
+                    b.HasIndex("TeacherId");
+
                     b.ToTable("Grades");
                 });
 
@@ -125,6 +130,14 @@ namespace Classio.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -163,10 +176,18 @@ namespace Classio.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ClassId")
+                    b.Property<int?>("ClassId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Parent1Id")
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Parent1Id")
                         .HasColumnType("int");
 
                     b.Property<int?>("Parent2Id")
@@ -225,7 +246,18 @@ namespace Classio.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("SchoolId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SubjectId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
@@ -235,6 +267,8 @@ namespace Classio.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("SchoolId");
+
+                    b.HasIndex("SubjectId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -293,10 +327,6 @@ namespace Classio.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -401,12 +431,10 @@ namespace Classio.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -443,12 +471,10 @@ namespace Classio.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -467,13 +493,13 @@ namespace Classio.Migrations
                     b.HasOne("Classio.Models.Student", "Student")
                         .WithMany("Absences")
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Classio.Models.Subject", "Subject")
                         .WithMany()
                         .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Student");
@@ -505,18 +531,26 @@ namespace Classio.Migrations
                     b.HasOne("Classio.Models.Student", "Student")
                         .WithMany("Grades")
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Classio.Models.Subject", "Subject")
                         .WithMany("Grades")
                         .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Classio.Models.Teacher", "Teacher")
+                        .WithMany("Grades")
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Student");
 
                     b.Navigation("Subject");
+
+                    b.Navigation("Teacher");
                 });
 
             modelBuilder.Entity("Classio.Models.Parent", b =>
@@ -534,15 +568,12 @@ namespace Classio.Migrations
                 {
                     b.HasOne("Classio.Models.Class", "Class")
                         .WithMany("Students")
-                        .HasForeignKey("ClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ClassId");
 
                     b.HasOne("Classio.Models.Parent", "Parent1")
                         .WithMany("StudentsAsParent1")
                         .HasForeignKey("Parent1Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Classio.Models.Parent", "Parent2")
                         .WithMany("StudentsAsParent2")
@@ -572,7 +603,8 @@ namespace Classio.Migrations
                 {
                     b.HasOne("Classio.Models.Class", "Class")
                         .WithMany("Subjects")
-                        .HasForeignKey("ClassId");
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Class");
                 });
@@ -585,6 +617,12 @@ namespace Classio.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Classio.Models.Subject", "Subject")
+                        .WithMany("Teachers")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Classio.Models.User", "User")
                         .WithOne("Teacher")
                         .HasForeignKey("Classio.Models.Teacher", "UserId")
@@ -592,6 +630,8 @@ namespace Classio.Migrations
                         .IsRequired();
 
                     b.Navigation("School");
+
+                    b.Navigation("Subject");
 
                     b.Navigation("User");
                 });
@@ -682,11 +722,15 @@ namespace Classio.Migrations
             modelBuilder.Entity("Classio.Models.Subject", b =>
                 {
                     b.Navigation("Grades");
+
+                    b.Navigation("Teachers");
                 });
 
             modelBuilder.Entity("Classio.Models.Teacher", b =>
                 {
                     b.Navigation("Classes");
+
+                    b.Navigation("Grades");
                 });
 
             modelBuilder.Entity("Classio.Models.User", b =>

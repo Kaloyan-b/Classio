@@ -12,8 +12,6 @@ namespace Classio.Models
         [MaxLength(20)]
         public string LastName { get; set; }
 
-        public string Role { get; set; }
-
         //Navigation
         public Student? Student { get; set; }
         public Teacher? Teacher { get; set; }
