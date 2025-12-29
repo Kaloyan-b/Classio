@@ -1,6 +1,133 @@
-﻿@{
-    ViewData["Title"] = "Privacy Policy";
-}
-<h1>@ViewData["Title"]</h1>
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>About Classio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<p>Use this page to detail your site's privacy policy.</p>
+     <style>
+        body {
+            font-family: "Segoe UI", Roboto, sans-serif;
+            background-color: #ffffff;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 2rem;
+        }
+
+        .card {
+            background-color: #fff7f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .footer-note {
+            margin-top: 3rem;
+            font-size: 0.9rem;
+            color: #666;
+            text-align: center;
+        }
+    </style> 
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>About Classio</h1>
+
+        <p>
+            <strong>Classio</strong> is a school management web application developed as a
+            <strong>school project</strong> for the <strong>2025/2026 academic year in SoftUni BUDITEL.</strong>
+        </p>
+
+        <p>
+            The project was created by <strong>Kaloyan Kirilov Boyadzhiev</strong>,
+            student in <strong>class 12A</strong>.
+        </p>
+
+        <p>
+            The goal of the project is to demonstrate practical knowledge in web development,
+            databases, and software architecture by solving a real-world problem related to
+            school organization and communication.
+        </p>
+
+        <h2>Project Purpose</h2>
+
+        <p>
+            Classio is designed to manage essential school-related information and processes,
+            focusing on clarity, structure, and ease of use.
+        </p>
+
+        <ul>
+            <li>Students and their academic data</li>
+            <li>Teachers and assigned subjects</li>
+            <li>Parents linked to students</li>
+            <li>Classes, grades, and absences</li>
+            <li>Role-based access and dashboards</li>
+        </ul>
+
+        <h2>Technology Stack</h2>
+
+        <div class="card">
+            <p><strong>Backend</strong></p>
+            <ul>
+                <li>ASP.NET Core MVC</li>
+                <li>C#</li>
+                <li>Entity Framework Core</li>
+                <li>ASP.NET Identity</li>
+            </ul>
+
+            <p><strong>Database</strong></p>
+            <ul>
+                <li>Microsoft SQL Server</li>
+                <li>SQL Server Management Studio (SSMS)</li>
+            </ul>
+
+            <p><strong>Frontend</strong></p>
+            <ul>
+                <li>Razor Views (CSHTML)</li>
+                <li>HTML5 & CSS3</li>
+                <li>Custom UI styling</li>
+            </ul>
+        </div>
+
+        <h2>Project Structure</h2>
+
+        <p>
+            The application follows the <strong>MVC (Model-View-Controller)</strong> pattern and
+            uses <strong>Areas</strong> for administrative functionality.
+        </p>
+
+        <p>
+            The structure separates business logic, data access, and presentation to improve
+            maintainability and readability.
+        </p>
+
+        <h2>Educational Context</h2>
+
+        <p>
+            Classio was developed for educational purposes and demonstrates:
+        </p>
+
+        <ul>
+            <li>Full-stack web development concepts</li>
+            <li>Database design and relationships</li>
+            <li>Authentication and authorization</li>
+            <li>Clean and maintainable code structure</li>
+        </ul>
+
+        <div class="footer-note">
+            © 2025–2026 — Classio School Project
+        </div>
+
+    </div>
+
+</body>
+</html>

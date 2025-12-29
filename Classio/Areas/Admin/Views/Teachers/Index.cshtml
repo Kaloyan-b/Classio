@@ -1,0 +1,61 @@
+﻿@model IEnumerable<Classio.Models.Teacher>
+@{
+    ViewData["Title"] = "Manage Teachers";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Teachers Management</h2>
+    <button type="button" class="btn btn-primary" onclick="loadModal('@Url.Action("Create")')">
+        + Add New Teacher
+    </button>
+</div>
+<div class="table-responsive">
+    <table class="table table-striped table-hover shadow-sm bg-white rounded">
+        <thead class="table-dark">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Subject</th>
+                <th>School</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.FirstName @item.LastName</td>
+                    <td>@item.User?.Email</td>
+                    <td>@item.Subject?.Name</td>
+                    <td>@item.School?.Name</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-warning"
+                                onclick="loadModal('@Url.Action("Edit", new { id = item.Id })')">
+                            Edit Info
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<div class="modal fade" id="teacherModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modalContent">
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Fetch form content from the URL
+        function loadModal(url) {
+            $.get(url, function (data) {
+                $("#modalContent").html(data);
+                $("#teacherModal").modal("show");
+            });
+        }
+    </script>
+}

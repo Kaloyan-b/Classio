@@ -22,12 +22,16 @@
         }
         else if (currentRole.Contains("Parent"))
         {
-            //?Could just display the list of all related students
+            //?display the list of all related students and their dashboards
             <a class="btn btn-lg btn-primary mt-3" href="@Url.Action("Dashboard", "Parent")">Go to Parent Dashboard</a>
         }
         else if (currentRole.Contains("Teacher"))
         {
             <a class="btn btn-lg btn-primary mt-3" href="@Url.Action("Dashboard", "Teacher")">Go to Teacher Dashboard</a>
+        }
+        else if (currentRole.Contains("Admin"))
+        {
+            <a class="btn btn-lg btn-primary mt-3" asp-area="Admin" asp-controller="Admin" asp-action="Index">Go to Admin Dashboard</a>
         }
 
     }

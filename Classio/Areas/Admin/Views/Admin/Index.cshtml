@@ -1,5 +1,46 @@
-﻿@page
-@model Classio.Areas.Admin.Views.Admin.IndexModel
+﻿@using Classio.ViewModels
+@model AdminDashboardViewModel
+
 @{
+    ViewData["Title"] = "Admin Dashboard";
 }
 
+<div class="container">
+    <h1>Admin Dashboard</h1>
+    <p class="text-muted">Welcome back, Admin.</p>
+
+    <div class="dashboard-grid" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+
+        <div class="card" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <h3>Students</h3>
+            <p style="font-size: 2rem; font-weight: bold; color: #F4A261;">@Model.StudentsCount</p>
+            <a asp-area="Admin" asp-controller="Students" asp-action="Index" style="cursor:pointer; display:inline-block; margin-top:10px;">
+                Manage
+            </a>
+        </div>
+
+        <div class="card" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <h3>Teachers</h3>
+            <p style="font-size: 2rem; font-weight: bold; color: #F4A261;">@Model.TeachersCount</p>
+            <a asp-area="Admin" asp-controller="Teachers" asp-action="Index" style="cursor:pointer; display:inline-block; margin-top:10px;">
+                Manage
+            </a>
+        </div>
+
+        <div class="card" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <h3>Parents</h3>
+            <p style="font-size: 2rem; font-weight: bold; color: #F4A261;">@Model.ParentsCount</p>
+            <a asp-area="Admin" asp-controller="Parents" asp-action="Index" style="cursor:pointer; display:inline-block; margin-top:10px;">
+                Manage
+            </a>
+        </div>
+
+        <div class="card" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <h3>Classes</h3>
+            <p style="font-size: 2rem; font-weight: bold; color: #F4A261;">@Model.ClassesCount</p>
+            <a asp-area="Admin" asp-controller="Classes" asp-action="Index" style="cursor:pointer; display:inline-block; margin-top:10px;">
+                Manage
+            </a>
+        </div>
+    </div>
+</div>

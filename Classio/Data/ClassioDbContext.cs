@@ -36,9 +36,9 @@ namespace Classio.Data
 
             // Class - Teacher
             modelBuilder.Entity<Class>()
-                .HasOne(c => c.Teacher)
+                .HasOne(c => c.HeadTeacher)
                 .WithMany(t => t.Classes)
-                .HasForeignKey(c => c.TeacherId)
+                .HasForeignKey(c => c.HeadTeacherId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Class -> Subjects
@@ -94,6 +94,18 @@ namespace Classio.Data
                 .WithMany(p => p.StudentsAsParent2)
                 .HasForeignKey(s => s.Parent2Id)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Class>()
+                .HasOne(c => c.HeadTeacher)
+                .WithMany(t => t.HeadOfClasses)
+                .HasForeignKey(c => c.HeadTeacherId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // Subject Teachers
+            modelBuilder.Entity<Class>()
+                .HasMany(c => c.SubjectTeachers)
+                .WithMany(t => t.ClassesTaught)
+                .UsingEntity(j => j.ToTable("ClassTeachers"));
         }
 
 

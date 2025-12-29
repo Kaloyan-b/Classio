@@ -40,20 +40,55 @@ public class Program
 
         var app = builder.Build();
 
-        // --- Role Seeding ---
+        // --- Role  Seeding ---
         using (var scope = app.Services.CreateScope())
         {
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            Task.Run(async () =>
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+            string[] roles = { "Admin", "Student", "Parent", "Teacher" };
+
+            foreach (var role in roles)
             {
-                string[] roles = { "Student", "Parent", "Teacher" };
-                foreach (var role in roles)
+                if (!roleManager.RoleExistsAsync(role).GetAwaiter().GetResult())
                 {
-                    if (!await roleManager.RoleExistsAsync(role))
-                        await roleManager.CreateAsync(new IdentityRole(role));
+                    roleManager.CreateAsync(new IdentityRole(role)).GetAwaiter().GetResult();
                 }
-            }).GetAwaiter().GetResult();
+            }
+
+            // default admin
+            string adminEmail = "admin@classio.com";
+            string adminPassword = "Admin123!";
+
+            var adminUser = userManager.FindByEmailAsync(adminEmail).GetAwaiter().GetResult();
+
+            if (adminUser == null)
+            {
+                adminUser = new User
+                {
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                    FirstName = "System",
+                    LastName = "Admin",
+                    EmailConfirmed = true
+                };
+
+                var result = userManager.CreateAsync(adminUser, adminPassword).GetAwaiter().GetResult();
+
+                if (result.Succeeded)
+                {
+                    userManager.AddToRoleAsync(adminUser, "Admin").GetAwaiter().GetResult();
+                }
+                else
+                {
+                    throw new Exception(
+                        "Admin seeding failed: " +
+                        string.Join(", ", result.Errors.Select(e => e.Description))
+                    );
+                }
+            }
         }
+
 
         // --- Pipeline ---
         if (app.Environment.IsDevelopment())
@@ -74,6 +109,10 @@ public class Program
         // Add authentication*before authorization
         app.UseAuthentication();
         app.UseAuthorization();
+        // Routing for Areas
+        app.MapControllerRoute(
+            name: "MyArea",
+            pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
         app.MapControllerRoute(
             name: "default",

@@ -23,12 +23,17 @@ namespace Classio.Models
 
         public ICollection<Grade> Grades { get; set; } = new List<Grade>();
 
+        // Classes where this teacher is the head teacher
+        public ICollection<Class> HeadOfClasses { get; set; } = new List<Class>();
+
+        // Classes where they just teach a subject
+        public ICollection<Class> ClassesTaught { get; set; } = new List<Class>();
 
         public ICollection<Class> Classes { get; set; } = new List<Class>();
-        
-        public int SchoolId { get; set; }
+
+        public int? SchoolId { get; set; }
         [ForeignKey(nameof(SchoolId))]
-        public School School { get; set; }
+        public School? School { get; set; }
 
 
 

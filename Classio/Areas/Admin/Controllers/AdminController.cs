@@ -1,11 +1,14 @@
 ﻿using Classio.Data;
 using Classio.Models;
+using Classio.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Classio.Areas.Admin.Controllers
 {
+    [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class AdminController: Controller
     {
         private readonly ClassioDbContext _context;
@@ -17,11 +20,18 @@ namespace Classio.Areas.Admin.Controllers
             _userManager = userManager;
         }
 
-        [Area("Student")]
-        [Authorize(Roles = "Student")]
+
         public IActionResult Index()
         {
-            return View();
+            var model = new AdminDashboardViewModel
+            {
+                StudentsCount = _context.Students.Count(),
+                TeachersCount = _context.Teachers.Count(),
+                ParentsCount = _context.Parents.Count(),
+                ClassesCount = _context.Classes.Count()
+            };
+
+            return View(model);
         }
     }
 }

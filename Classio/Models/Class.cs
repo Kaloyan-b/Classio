@@ -11,9 +11,15 @@ namespace Classio.Models
         /// 
         /// </summary>
         public string Name { get; set; }
-        public int TeacherId { get; set; }
-        [ForeignKey(nameof(TeacherId))]
-        public Teacher Teacher { get; set; }
+
+        //Head teacher = Klasen
+        public int? HeadTeacherId { get; set; }
+        [ForeignKey(nameof(HeadTeacherId))]
+        public Teacher HeadTeacher { get; set; }
+
+        // All teachers that have classes with this class
+        public ICollection<Teacher> SubjectTeachers { get; set; } = new List<Teacher>();
+
         public ICollection<Student> Students { get; set; } = new List<Student>();
         public int SchoolId { get; set; }
         [ForeignKey(nameof(SchoolId))]
