@@ -32,6 +32,17 @@
             <label asp-for="SchoolId"></label>
             <select asp-for="SchoolId" class="form-control" asp-items="ViewBag.SchoolId"></select>
         </div>
+        <div class="mb-3">
+            <label asp-for="HeadOfClassIds" class="form-label">Head Teacher For</label>
+            <select asp-for="HeadOfClassIds" class="form-select" asp-items="ViewBag.HeadOfClassesList" multiple></select>
+            <span class="text-muted small">Hold Ctrl to select multiple</span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="SubjectClassIds" class="form-label">Teaches Subject In</label>
+            <select asp-for="SubjectClassIds" class="form-select" asp-items="ViewBag.SubjectClassesList" multiple></select>
+            <span class="text-muted small">Hold Ctrl to select multiple</span>
+        </div>
     </div>
 
     <div class="modal-footer">

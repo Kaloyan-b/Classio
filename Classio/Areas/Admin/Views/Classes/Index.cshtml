@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Classio.Models.Class>
+
+<h1>Manage Classes</h1>
+
+<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createClassModal"
+        onclick="loadModal('@Url.Action("Create", "Classes", new { area = "Admin" })', 'createClassModalContent')">
+    <i class="bi bi-plus-lg"></i> Add Class
+</button>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>School</th>
+            <th>Head Teacher</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.School?.Name</td>
+                <td>
+                    @if (item.HeadTeacher != null)
+                    {
+                        <span>@item.HeadTeacher.FirstName @item.HeadTeacher.LastName</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted fst-italic">None</span>
+                    }
+                </td>
+                <td>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="modal fade" id="createClassModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" id="createClassModalContent">
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function loadModal(url, targetId) {
+            $.get(url, function (data) {
+                $('#' + targetId).html(data);
+            });
+        }
+    </script>
+}

@@ -29,8 +29,6 @@ namespace Classio.Models
         // Classes where they just teach a subject
         public ICollection<Class> ClassesTaught { get; set; } = new List<Class>();
 
-        public ICollection<Class> Classes { get; set; } = new List<Class>();
-
         public int? SchoolId { get; set; }
         [ForeignKey(nameof(SchoolId))]
         public School? School { get; set; }

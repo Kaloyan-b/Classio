@@ -34,13 +34,6 @@ namespace Classio.Data
                 .HasForeignKey(t => t.SubjectId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Class - Teacher
-            modelBuilder.Entity<Class>()
-                .HasOne(c => c.HeadTeacher)
-                .WithMany(t => t.Classes)
-                .HasForeignKey(c => c.HeadTeacherId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             // Class -> Subjects
             modelBuilder.Entity<Subject>()
                 .HasOne(s => s.Class)

@@ -25,6 +25,7 @@ namespace Classio.Models
         [ForeignKey(nameof(SchoolId))]
         public School School { get; set; }
 
+
         public ICollection<Subject> Subjects { get; set; } = new List<Subject>();
 
         public ICollection<Absence> Absences { get; set; } = new List<Absence>();

@@ -25,5 +25,11 @@ namespace Classio.Areas.Admin.Models
         [Required]
         [Display(Name = "School")]
         public int? SchoolId { get; set; }
+
+        [Display(Name = "Head of Classes")]
+        public List<int> HeadOfClassIds { get; set; } = new List<int>();
+
+        [Display(Name = "Classes Taught")]
+        public List<int> SubjectClassIds { get; set; } = new List<int>();
     }
 }
