@@ -4,6 +4,7 @@ using Classio.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Classio.Migrations
 {
     [DbContext(typeof(ClassioDbContext))]
-    partial class ClassioDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260128100932_addedschoolfkforstudents")]
+    partial class addedschoolfkforstudents
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -124,8 +127,8 @@ namespace Classio.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.Property<double>("Value")
-                        .HasColumnType("float");
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

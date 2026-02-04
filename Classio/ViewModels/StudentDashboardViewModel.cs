@@ -10,5 +10,6 @@ namespace Classio.ViewModels
         public List<GradeViewModel> Grades { get; set; } = new();
         public List<AbsenceViewModel> Absences { get; set; } = new();
         public List<ScheduleViewModel> Schedule { get; set; } = new();
+        public List<string> Subjects { get; set; } = new();
     }
 }

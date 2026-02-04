@@ -31,6 +31,7 @@ namespace Classio.Areas.Admin.Controllers
                 .ToListAsync();
             return View(teachers);
         }
+
         [HttpGet]
         public IActionResult Create()
         {
@@ -56,7 +57,7 @@ namespace Classio.Areas.Admin.Controllers
                 {
                     await _userManager.AddToRoleAsync(user, "Teacher");
 
-                    var teacher = new Teacher
+                    var teacher = new Classio.Models.Teacher
                     {
                         FirstName = model.FirstName,
                         LastName = model.LastName,
@@ -67,18 +68,18 @@ namespace Classio.Areas.Admin.Controllers
                     _context.Add(teacher);
                     await _context.SaveChangesAsync();
                     return Redirect(nameof(Index));
-
                 }
             }
             return RedirectToAction(nameof(Index));
         }
+
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var teacher = await _context.Teachers
                 .Include(t => t.User)
-                .Include(t => t.HeadOfClasses) 
-                .Include(t => t.ClassesTaught) 
+                .Include(t => t.HeadOfClasses)
+                .Include(t => t.ClassesTaught)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (teacher == null) return NotFound();

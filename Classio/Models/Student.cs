@@ -27,6 +27,10 @@ namespace Classio.Models
         [ForeignKey(nameof(ClassId))]
         public Class Class { get; set; }
 
+        public int? SchoolId { get; set; }
+        [ForeignKey(nameof(SchoolId))]
+        public School School { get; set; }
+
         public int? Parent1Id { get; set; }
         [ForeignKey(nameof(Parent1Id))]
         [InverseProperty(nameof(Parent.StudentsAsParent1))]

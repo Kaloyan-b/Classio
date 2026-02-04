@@ -9,7 +9,7 @@ namespace Classio.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public int Value { get; set; }
+        public double Value { get; set; }
         public GradeType Type { get; set; } = GradeType.Other;
         public string? Description { get; set; }
         public DateTime Date { get; set; } = DateTime.Now;

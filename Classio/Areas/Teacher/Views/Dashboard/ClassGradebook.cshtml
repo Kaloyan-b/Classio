@@ -1,0 +1,95 @@
+﻿@model Classio.Areas.Teacher.Models.ClassGradebookViewModel
+
+@{
+    ViewData["Title"] = "Gradebook - " + Model.ClassName;
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h1>@Model.ClassName Gradebook</h1>
+            <h4 class="text-muted">Subject: @Model.SubjectName</h4>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">Back to Dashboard</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <form asp-action="UpdateGrades" method="post">
+        <input type="hidden" asp-for="ClassId" />
+        <input type="hidden" asp-for="SubjectId" />
+
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 25%">Student Name</th>
+                            <th style="width: 45%">Previous Grades</th>
+                            <th style="width: 20%">Add New Grade</th>
+                            <th style="width: 10%">Average</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Students.Count; i++)
+                        {
+                            <tr>
+                                <input type="hidden" asp-for="Students[i].StudentId" />
+                                <input type="hidden" asp-for="Students[i].StudentName" />
+
+                                <td class="fw-bold">
+                                    @Model.Students[i].StudentName
+                                </td>
+
+                                <td>
+                                    @if (Model.Students[i].ExistingGrades.Any())
+                                    {
+                                        @foreach (var grade in Model.Students[i].ExistingGrades)
+                                        {
+                                            var badgeClass = grade < 3 ? "bg-danger" : (grade >= 5 ? "bg-success" : "bg-primary");
+                                            <span class="badge @badgeClass me-1" style="font-size: 0.9rem;">@grade</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">No grades yet</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <input asp-for="Students[i].NewGrade"
+                                           type="number" step="0.25" min="2" max="6"
+                                           class="form-control"
+                                           placeholder="2.0 - 6.0" />
+                                    <span asp-validation-for="Students[i].NewGrade" class="text-danger small"></span>
+                                </td>
+
+                                <td>
+                                    @if (Model.Students[i].ExistingGrades.Any())
+                                    {
+                                        <strong>@Math.Round(Model.Students[i].ExistingGrades.Average(), 2)</strong>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer bg-white text-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Add Grades
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

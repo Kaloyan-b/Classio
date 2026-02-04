@@ -1,0 +1,79 @@
+﻿@model Classio.Models.Teacher
+
+@{
+    ViewData["Title"] = "Teacher Dashboard";
+}
+
+<div class="container-fluid p-4">
+    <h1 class="h3 mb-4 text-gray-800">Welcome, @Model.FirstName!</h1>
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-primary text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="bi bi-star-fill me-2"></i>My Homeroom Classes (Head Teacher)
+                    </h6>
+                </div>
+                <div class="card-body">
+                    @if (Model.HeadOfClasses.Any())
+                    {
+                        <div class="list-group">
+                            @foreach (var c in Model.HeadOfClasses)
+                            {
+                                <a asp-action="ManageClass" asp-route-id="@c.Id" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5 class="mb-1">@c.Name</h5>
+                                        <small class="text-muted">@c.School?.Name</small>
+                                    </div>
+                                    <span class="badge bg-primary rounded-pill">Manage</span>
+                                </a>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center py-3">You are not assigned as a Head Teacher.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-success text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="bi bi-book-half me-2"></i>My Subject Classes (@Model.Subject?.Name)
+                    </h6>
+                </div>
+                <div class="card-body">
+                    @if (Model.ClassesTaught.Any())
+                    {
+                        <div class="row">
+                            @foreach (var c in Model.ClassesTaught)
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100 border-left-success">
+                                        <div class="card-body">
+                                            <h5 class="card-title">@c.Name</h5>
+                                            <p class="card-text small text-muted">@c.School?.Name</p>
+                                            <div class="d-grid gap-2">
+                                                <a asp-action="ClassGradebook" asp-route-id="@c.Id" class="btn btn-sm btn-outline-success">
+                                                    <i class="bi bi-calculator"></i> Gradebook
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center py-3">No subject classes assigned.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
