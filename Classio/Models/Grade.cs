@@ -15,6 +15,7 @@ namespace Classio.Models
         public DateTime Date { get; set; } = DateTime.Now;
         public int StudentId { get; set; }
         [ForeignKey(nameof(StudentId))]
+        
         public Student Student { get; set; }
         public int TeacherId { get; set; }
         [ForeignKey(nameof(TeacherId))]

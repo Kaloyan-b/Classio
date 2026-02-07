@@ -19,6 +19,7 @@
         @if(currentRole.Contains("Student"))
         {
             <a class="btn btn-lg btn-primary mt-3" href="@Url.Action("Dashboard", "Student")">Go to Student Dashboard</a>
+            
         }
         else if (currentRole.Contains("Parent"))
         {
