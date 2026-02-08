@@ -20,6 +20,8 @@ namespace Classio.Data
         public DbSet<Subject> Subjects { get; set; } = null!;
         public DbSet<Grade> Grades { get; set; } = null!;
         public DbSet<Absence> Absences { get; set; } = null!;
+        public DbSet<ClassPeriod> ClassPeriods { get; set; } = null!;
+        public DbSet<ScheduleSlot> ScheduleSlots { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,0 +1,126 @@
+﻿@model List<Classio.Models.ScheduleSlot>
+@{
+    var days = new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday };
+}
+
+<div class="container-fluid mt-3">
+    <div class="row">
+
+        <div class="col-md-2 bg-light p-3 border-end" style="height: 90vh;">
+            <h5>Subjects</h5>
+            <p class="text-muted small">Drag these to the grid</p>
+
+            @foreach (var subject in ViewBag.Subjects)
+            {
+                <div class="card mb-2 p-2 shadow-sm draggable-subject"
+                     draggable="true"
+                     data-id="@subject.Id"
+                     style="cursor: grab; border-left: 4px solid #007bff;">
+                    @subject.Name
+                </div>
+            }
+        </div>
+
+        <div class="col-md-10 p-3">
+            <h2>Schedule: @ViewBag.ClassName</h2>
+
+            <table class="table table-bordered text-center align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="width: 150px;">Time</th>
+                        <th>Mon</th>
+                        <th>Tue</th>
+                        <th>Wed</th>
+                        <th>Thu</th>
+                        <th>Fri</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var period in ViewBag.Periods)
+                    {
+                        if (period.IsBreak)
+                        {
+                            <tr class="table-secondary">
+                                <td class="fw-bold">@period.Name</td>
+                                <td colspan="5" class="text-muted small">
+                                    @period.StartTime.ToString(@"hh\:mm") - @period.EndTime.ToString(@"hh\:mm")
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td class="bg-light fw-bold">
+                                    <div class="small">@period.Name</div>
+                                    @period.StartTime.ToString(@"hh\:mm") - @period.EndTime.ToString(@"hh\:mm")
+                                </td>
+
+                                @foreach (var day in days)
+                                {
+                                    // Check if we already have data here
+                                    var slot = Model.FirstOrDefault(s => s.ClassPeriodId == period.Id && s.DayOfWeek == day);
+
+                                    <td class="drop-zone"
+                                        data-period-id="@period.Id"
+                                        data-day="@day"
+                                        ondrop="drop(event)"
+                                        ondragover="allowDrop(event)"
+                                        style="height: 80px; vertical-align: top;">
+
+                                        @if (slot != null)
+                                        {
+                                            <div class="badge bg-primary w-100 p-2 mt-1">
+                                                @slot.Subject.Name <br />
+                                                <small>@slot.Teacher?.LastName</small>
+                                            </div>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. Setup Drag
+    document.querySelectorAll('.draggable-subject').forEach(item => {
+        item.addEventListener('dragstart', ev => {
+            ev.dataTransfer.setData("subjectId", ev.target.dataset.id);
+        });
+    });
+
+    // 2. Allow Drop
+    function allowDrop(ev) {
+        ev.preventDefault();
+        ev.target.closest('td').style.backgroundColor = "#e9ecef"; // Highlight
+    }
+
+    // 3. Handle Drop (Save)
+    function drop(ev) {
+        ev.preventDefault();
+        var cell = ev.target.closest('td');
+        cell.style.backgroundColor = ""; // Remove Highlight
+
+        var subjectId = ev.dataTransfer.getData("subjectId");
+        var periodId = cell.dataset.periodId;
+        var day = cell.dataset.day;
+
+        // AJAX Call
+        fetch('/Admin/Schedule/UpdateSlot', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                ClassId: @ViewBag.ClassId,
+                PeriodId: parseInt(periodId),
+                Day: day,
+                SubjectId: parseInt(subjectId)
+            })
+        }).then(res => {
+            if(res.ok) location.reload(); // Simple reload to see changes
+        });
+    }
+</script>

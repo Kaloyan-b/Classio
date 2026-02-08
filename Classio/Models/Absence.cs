@@ -1,3 +1,4 @@
+using Classio.Areas.Teacher.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -9,7 +10,7 @@ namespace Classio.Models
         public int Id { get; set; }
         [Required]
         public DateTime Date { get; set; } = DateTime.Now;
-        public bool IsExcused { get; set; } = false;
+        public AttendanceState AttendanceState { get; set; } = 0;
         public int StudentId { get; set; }
         [ForeignKey(nameof(StudentId))]
         public Student Student { get; set; } = null!;

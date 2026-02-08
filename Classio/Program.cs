@@ -34,6 +34,8 @@ public class Program
         .AddDefaultTokenProviders()
         .AddDefaultUI();
 
+        builder.Services.AddScoped<Classio.Services.IScheduleService, Classio.Services.ScheduleService>();
+
         // --- MVC & Razor ---
         builder.Services.AddControllersWithViews();
         builder.Services.AddRazorPages();

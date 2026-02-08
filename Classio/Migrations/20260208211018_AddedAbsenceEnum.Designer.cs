@@ -4,6 +4,7 @@ using Classio.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Classio.Migrations
 {
     [DbContext(typeof(ClassioDbContext))]
-    partial class ClassioDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260208211018_AddedAbsenceEnum")]
+    partial class AddedAbsenceEnum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,35 +101,6 @@ namespace Classio.Migrations
                     b.ToTable("Classes");
                 });
 
-            modelBuilder.Entity("Classio.Models.ClassPeriod", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<TimeSpan>("EndTime")
-                        .HasColumnType("time");
-
-                    b.Property<bool>("IsBreak")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("time");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ClassPeriods");
-                });
-
             modelBuilder.Entity("Classio.Models.Grade", b =>
                 {
                     b.Property<int>("Id")
@@ -193,45 +167,6 @@ namespace Classio.Migrations
                         .IsUnique();
 
                     b.ToTable("Parents");
-                });
-
-            modelBuilder.Entity("Classio.Models.ScheduleSlot", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ClassId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ClassPeriodId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DayOfWeek")
-                        .HasColumnType("int");
-
-                    b.Property<string>("GoogleEventId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SubjectId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TeacherId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClassId");
-
-                    b.HasIndex("ClassPeriodId");
-
-                    b.HasIndex("SubjectId");
-
-                    b.HasIndex("TeacherId");
-
-                    b.ToTable("ScheduleSlots");
                 });
 
             modelBuilder.Entity("Classio.Models.School", b =>
@@ -659,41 +594,6 @@ namespace Classio.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Classio.Models.ScheduleSlot", b =>
-                {
-                    b.HasOne("Classio.Models.Class", "SchoolClass")
-                        .WithMany()
-                        .HasForeignKey("ClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Classio.Models.ClassPeriod", "ClassPeriod")
-                        .WithMany()
-                        .HasForeignKey("ClassPeriodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Classio.Models.Subject", "Subject")
-                        .WithMany()
-                        .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Classio.Models.Teacher", "Teacher")
-                        .WithMany()
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ClassPeriod");
-
-                    b.Navigation("SchoolClass");
-
-                    b.Navigation("Subject");
-
-                    b.Navigation("Teacher");
                 });
 
             modelBuilder.Entity("Classio.Models.Student", b =>
