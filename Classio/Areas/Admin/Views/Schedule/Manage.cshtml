@@ -57,12 +57,12 @@
 
                                 @foreach (var day in days)
                                 {
-                                    // Check if we already have data here
+
                                     var slot = Model.FirstOrDefault(s => s.ClassPeriodId == period.Id && s.DayOfWeek == day);
 
                                     <td class="drop-zone"
                                         data-period-id="@period.Id"
-                                        data-day="@day"
+                                        data-day="@((int)day)"
                                         ondrop="drop(event)"
                                         ondragover="allowDrop(event)"
                                         style="height: 80px; vertical-align: top;">
@@ -86,41 +86,82 @@
 </div>
 
 <script>
-    // 1. Setup Drag
-    document.querySelectorAll('.draggable-subject').forEach(item => {
-        item.addEventListener('dragstart', ev => {
-            ev.dataTransfer.setData("subjectId", ev.target.dataset.id);
+    document.addEventListener("DOMContentLoaded", function() {
+        // Setup Draggable
+        const draggables = document.querySelectorAll('.draggable-subject');
+
+        draggables.forEach(item => {
+            item.addEventListener('dragstart', function(ev) {
+                const subjectId = ev.target.getAttribute('data-id');
+                console.log("Started dragging Subject ID:", subjectId);
+
+                ev.dataTransfer.setData("subjectId", subjectId);
+                ev.dataTransfer.effectAllowed = "copy"; // Tell browser this is a copy
+            });
         });
     });
 
-    // 2. Allow Drop
+    // Allow Drop 
     function allowDrop(ev) {
-        ev.preventDefault();
-        ev.target.closest('td').style.backgroundColor = "#e9ecef"; // Highlight
+        ev.preventDefault(); // Stop snap back
+        ev.dataTransfer.dropEffect = "copy"; // 
+
+        const cell = ev.target.closest('td');
+        if (cell) cell.style.background = "#e9ecef";
     }
 
-    // 3. Handle Drop (Save)
+    // Drop
     function drop(ev) {
-        ev.preventDefault();
-        var cell = ev.target.closest('td');
-        cell.style.backgroundColor = ""; // Remove Highlight
+        ev.preventDefault(); 
+        console.log("Drop event fired!");
 
-        var subjectId = ev.dataTransfer.getData("subjectId");
-        var periodId = cell.dataset.periodId;
-        var day = cell.dataset.day;
+        const cell = ev.target.closest('td');
 
-        // AJAX Call
+        if (!cell) {
+            console.error("Dropped on something that isn't a cell!");
+            return;
+        }
+
+        cell.style.background = "";
+
+        const subjectId = ev.dataTransfer.getData("subjectId");
+        const periodId = cell.getAttribute('data-period-id');
+        const day = cell.getAttribute('data-day');
+
+        console.log(`Dropping Subject ${subjectId} onto Period ${periodId}, ${day}`);
+
+        //Validate
+        if (!subjectId || !periodId || !day) {
+            console.error("Missing data!", { subjectId, periodId, day });
+            alert("Error: Could not read drop data.");
+            return;
+        }
+
+        // Prepare Data for API
+        const payload = {
+            ClassId: @ViewBag.ClassId,
+            PeriodId: parseInt(periodId),
+            Day: parseInt(day), 
+            SubjectId: parseInt(subjectId)
+        };
+
+        // Send to Server
         fetch('/Admin/Schedule/UpdateSlot', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                ClassId: @ViewBag.ClassId,
-                PeriodId: parseInt(periodId),
-                Day: day,
-                SubjectId: parseInt(subjectId)
-            })
-        }).then(res => {
-            if(res.ok) location.reload(); // Simple reload to see changes
-        });
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log("Saved successfully!");
+                location.reload();
+            } else {
+                console.error("Server Error:", response);
+                alert("Server failed to save.");
+            }
+        })
+        .catch(error => console.error("Network Error:", error));
     }
 </script>

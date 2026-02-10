@@ -25,7 +25,7 @@ namespace Classio.Areas.Admin.Controllers
             return View(await _context.Classes.ToListAsync());
         }
 
-        // Drag-and-Drop Editor
+        // Editor
         public async Task<IActionResult> Manage(int id)
         {
             var schoolClass = await _context.Classes.FindAsync(id);
@@ -37,7 +37,7 @@ namespace Classio.Areas.Admin.Controllers
             // Subjects to drag
             ViewBag.Subjects = await _context.Subjects.ToListAsync();
 
-            // Bell Schedule
+            // Schedule
             ViewBag.Periods = await _scheduleService.GetPeriodsAsync();
 
             // Existing filled slots
@@ -50,13 +50,20 @@ namespace Classio.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateSlot([FromBody] UpdateSlotRequest request)
         {
-            await _scheduleService.UpdateSlotAsync(
-                request.ClassId,
-                request.PeriodId,
-                request.Day,
-                request.SubjectId
-            );
-            return Ok(new { success = true });
+            try
+            {
+                await _scheduleService.UpdateSlotAsync(
+                    request.ClassId,
+                    request.PeriodId,
+                    request.Day,
+                    request.SubjectId
+                );
+                return Ok(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
         }
     }
 
