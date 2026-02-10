@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Classio.Models.Class>
+
+@{
+    ViewData["Title"] = "Select Class for Scheduling";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Manage Schedules</h2>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <p class="text-muted">Select a class below to edit its weekly schedule.</p>
+
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Class Name</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td class="fw-bold">@item.Name</td>
+                            <td class="text-end">
+                                <a asp-action="Manage"
+                                   asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-primary">
+                                    <i class="bi bi-calendar-week"></i> Edit Schedule
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            @if (!Model.Any())
+            {
+                <div class="alert alert-warning text-center mt-3">
+                    No classes found. Please create a class first.
+                </div>
+            }
+        </div>
+    </div>
+</div>

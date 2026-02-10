@@ -8,7 +8,7 @@ namespace Classio.Services
     {
         Task<List<ClassPeriod>> GetPeriodsAsync();
         Task<List<ScheduleSlot>> GetScheduleForClassAsync(int classId);
-        Task UpdateSlotAsync(int classId, int periodId, DayOfWeek day, int subjectId);
+        Task UpdateSlotAsync(int classId, int periodId, DayOfWeek day, int subjectId, int teacherId);
     }
 
     public class ScheduleService : IScheduleService
@@ -34,24 +34,24 @@ namespace Classio.Services
                 .ToListAsync();
         }
 
-        public async Task UpdateSlotAsync(int classId, int periodId, DayOfWeek day, int subjectId)
+        public async Task UpdateSlotAsync(int classId, int periodId, DayOfWeek day, int subjectId, int teacherId)
         {
             var subject = await _context.Subjects
                 .Include(s => s.Teachers)
                 .FirstOrDefaultAsync(s => s.Id == subjectId);
 
-            if (subject == null)
-                throw new Exception("Subject not found"); 
+            if (subject == null) throw new Exception("Subject not found");
 
-            var teacherId = subject.Teachers.FirstOrDefault()?.Id ?? 0;
+            int finalTeacherId = teacherId;
 
-            if (teacherId == 0)
-                throw new Exception($"Subject '{subject.Name}' has no teachers assigned!");            
+            if (finalTeacherId == 0)
+            {
+                // select the first one
+                finalTeacherId = subject.Teachers.FirstOrDefault()?.Id ?? 0;
 
-            if (subject == null) return;
-
-            if (teacherId == 0) return;
-
+                if (finalTeacherId == 0)
+                    throw new Exception($"Subject '{subject.Name}' has no teachers assigned! Add a teacher to this subject first.");
+            }
 
             var existingSlot = await _context.ScheduleSlots
                 .FirstOrDefaultAsync(s => s.ClassId == classId
@@ -61,19 +61,18 @@ namespace Classio.Services
             if (existingSlot != null)
             {
                 existingSlot.SubjectId = subjectId;
-                existingSlot.TeacherId = teacherId;
+                existingSlot.TeacherId = finalTeacherId;
                 _context.Update(existingSlot);
             }
             else
             {
-                // Create new
                 var newSlot = new ScheduleSlot
                 {
                     ClassId = classId,
                     ClassPeriodId = periodId,
                     DayOfWeek = day,
                     SubjectId = subjectId,
-                    TeacherId = teacherId
+                    TeacherId = finalTeacherId 
                 };
                 _context.Add(newSlot);
             }

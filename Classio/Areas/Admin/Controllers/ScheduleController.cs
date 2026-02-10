@@ -56,7 +56,8 @@ namespace Classio.Areas.Admin.Controllers
                     request.ClassId,
                     request.PeriodId,
                     request.Day,
-                    request.SubjectId
+                    request.SubjectId,
+                    request.TeacherId
                 );
                 return Ok(new { success = true });
             }
@@ -64,6 +65,30 @@ namespace Classio.Areas.Admin.Controllers
             {
                 return BadRequest(new { success = false, message = ex.Message });
             }
+        }
+
+        [HttpGet] // This specific name fixes the 404
+        public async Task<IActionResult> GetTeachersForSubject(int subjectId)
+        {
+            // 1. Get the subject and include the list of Teachers assigned to it
+            var subject = await _context.Subjects
+                .Include(s => s.Teachers)
+                .FirstOrDefaultAsync(s => s.Id == subjectId);
+
+            if (subject == null)
+            {
+                return NotFound("Subject not found");
+            }
+
+            // 2. Transform the list into simple JSON (id, name)
+            var teacherList = subject.Teachers
+                .Select(t => new {
+                    id = t.Id,
+                    name = t.FirstName + " " + t.LastName // Adjust if your Teacher model uses different names
+                })
+                .ToList();
+
+            return Json(teacherList);
         }
     }
 
@@ -74,5 +99,6 @@ namespace Classio.Areas.Admin.Controllers
         public int PeriodId { get; set; }
         public DayOfWeek Day { get; set; }
         public int SubjectId { get; set; }
+        public int TeacherId { get; set; }
     }
 }

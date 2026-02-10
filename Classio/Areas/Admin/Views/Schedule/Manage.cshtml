@@ -5,34 +5,33 @@
 
 <div class="container-fluid mt-3">
     <div class="row">
-
-        <div class="col-md-2 bg-light p-3 border-end" style="height: 90vh;">
+        <div class="col-md-2 bg-light p-3 border-end vh-100">
             <h5>Subjects</h5>
-            <p class="text-muted small">Drag these to the grid</p>
+            <small class="text-muted d-block mb-3">Drag to schedule. Click assigned class to change teacher.</small>
 
-            @foreach (var subject in ViewBag.Subjects)
-            {
-                <div class="card mb-2 p-2 shadow-sm draggable-subject"
-                     draggable="true"
-                     data-id="@subject.Id"
-                     style="cursor: grab; border-left: 4px solid #007bff;">
-                    @subject.Name
-                </div>
-            }
+            <div id="subject-pool">
+                @foreach (var subject in ViewBag.Subjects)
+                {
+                    <div class="card mb-2 p-2 shadow-sm draggable-subject"
+                         draggable="true"
+                         data-id="@subject.Id"
+                         style="cursor: grab; border-left: 4px solid #0d6efd;">
+                        @subject.Name
+                    </div>
+                }
+            </div>
         </div>
 
         <div class="col-md-10 p-3">
             <h2>Schedule: @ViewBag.ClassName</h2>
-
             <table class="table table-bordered text-center align-middle">
                 <thead class="table-dark">
                     <tr>
-                        <th style="width: 150px;">Time</th>
-                        <th>Mon</th>
-                        <th>Tue</th>
-                        <th>Wed</th>
-                        <th>Thu</th>
-                        <th>Fri</th>
+                        <th style="width:100px;">Time</th>
+                        @foreach (var day in days)
+                        {
+                            <th>@day</th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
@@ -42,9 +41,7 @@
                         {
                             <tr class="table-secondary">
                                 <td class="fw-bold">@period.Name</td>
-                                <td colspan="5" class="text-muted small">
-                                    @period.StartTime.ToString(@"hh\:mm") - @period.EndTime.ToString(@"hh\:mm")
-                                </td>
+                                <td colspan="5" class="small text-muted">@period.StartTime - @period.EndTime</td>
                             </tr>
                         }
                         else
@@ -52,15 +49,13 @@
                             <tr>
                                 <td class="bg-light fw-bold">
                                     <div class="small">@period.Name</div>
-                                    @period.StartTime.ToString(@"hh\:mm") - @period.EndTime.ToString(@"hh\:mm")
+                                    @period.StartTime.ToString(@"hh\:mm")
                                 </td>
-
                                 @foreach (var day in days)
                                 {
-
                                     var slot = Model.FirstOrDefault(s => s.ClassPeriodId == period.Id && s.DayOfWeek == day);
 
-                                    <td class="drop-zone"
+                                    <td class="drop-zone position-relative"
                                         data-period-id="@period.Id"
                                         data-day="@((int)day)"
                                         ondrop="drop(event)"
@@ -69,9 +64,15 @@
 
                                         @if (slot != null)
                                         {
-                                            <div class="badge bg-primary w-100 p-2 mt-1">
-                                                @slot.Subject.Name <br />
-                                                <small>@slot.Teacher?.LastName</small>
+                                            <div class="badge bg-primary w-100 p-2 mt-1 shadow-sm text-wrap"
+                                                 style="cursor: pointer;"
+                                                 onclick="openEditModal(@slot.SubjectId, @period.Id, @((int)day))">
+
+                                                <div class="fs-6">@slot.Subject.Name</div>
+                                                <div class="fw-light small">
+                                                    <i class="bi bi-person"></i> @slot.Teacher?.LastName
+                                                    <i class="bi bi-pencil-square ms-1"></i>
+                                                </div>
                                             </div>
                                         }
                                     </td>
@@ -85,83 +86,117 @@
     </div>
 </div>
 
+<div class="modal fade" id="teacherModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Change Teacher</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editSubjectId">
+                <input type="hidden" id="editPeriodId">
+                <input type="hidden" id="editDay">
+
+                <label class="form-label">Select Teacher:</label>
+                <select id="teacherSelect" class="form-select mb-3"></select>
+
+                <button class="btn btn-success w-100" onclick="saveManualAssignment()">Save Change</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Setup Draggable
-        const draggables = document.querySelectorAll('.draggable-subject');
-
-        draggables.forEach(item => {
-            item.addEventListener('dragstart', function(ev) {
-                const subjectId = ev.target.getAttribute('data-id');
-                console.log("Started dragging Subject ID:", subjectId);
-
-                ev.dataTransfer.setData("subjectId", subjectId);
-                ev.dataTransfer.effectAllowed = "copy"; // Tell browser this is a copy
-            });
+    // 1. DRAG START
+    document.querySelectorAll('.draggable-subject').forEach(item => {
+        item.addEventListener('dragstart', ev => {
+            ev.dataTransfer.setData("subjectId", ev.target.dataset.id);
         });
     });
 
-    // Allow Drop 
+    // 2. ALLOW DROP
     function allowDrop(ev) {
-        ev.preventDefault(); // Stop snap back
-        ev.dataTransfer.dropEffect = "copy"; // 
-
+        ev.preventDefault();
         const cell = ev.target.closest('td');
-        if (cell) cell.style.background = "#e9ecef";
+        if(cell) cell.style.backgroundColor = "#e9ecef";
     }
 
-    // Drop
+    // 3. HANDLE DROP (Auto-Assign Default Teacher)
     function drop(ev) {
-        ev.preventDefault(); 
-        console.log("Drop event fired!");
-
+        ev.preventDefault();
         const cell = ev.target.closest('td');
-
-        if (!cell) {
-            console.error("Dropped on something that isn't a cell!");
-            return;
-        }
-
-        cell.style.background = "";
+        cell.style.backgroundColor = "";
 
         const subjectId = ev.dataTransfer.getData("subjectId");
         const periodId = cell.getAttribute('data-period-id');
         const day = cell.getAttribute('data-day');
 
-        console.log(`Dropping Subject ${subjectId} onto Period ${periodId}, ${day}`);
+        // teacherId = 0 means "Auto-Detect Default Teacher"
+        performSave(periodId, day, subjectId, 0);
+    }
 
-        //Validate
-        if (!subjectId || !periodId || !day) {
-            console.error("Missing data!", { subjectId, periodId, day });
-            alert("Error: Could not read drop data.");
-            return;
-        }
+    // 4. OPEN MODAL (Manual Assign)
+    function openEditModal(subjectId, periodId, day) {
+        // Set hidden inputs
+        document.getElementById('editSubjectId').value = subjectId;
+        document.getElementById('editPeriodId').value = periodId;
+        document.getElementById('editDay').value = day;
 
-        // Prepare Data for API
+        // Show Modal
+        const modal = new bootstrap.Modal(document.getElementById('teacherModal'));
+        modal.show();
+
+        // Load Teachers
+        const select = document.getElementById('teacherSelect');
+        select.innerHTML = "<option>Loading...</option>";
+        select.disabled = true;
+
+        fetch(`/Admin/Schedule/GetTeachersForSubject?subjectId=${subjectId}`)
+            .then(res => res.json())
+            .then(data => {
+                select.innerHTML = "";
+                data.forEach(t => {
+                    let opt = document.createElement('option');
+                    opt.value = t.id;
+                    opt.text = t.name;
+                    select.add(opt);
+                });
+                select.disabled = false;
+            });
+    }
+
+    // 5. SAVE MANUAL ASSIGNMENT
+    function saveManualAssignment() {
+        const subjectId = document.getElementById('editSubjectId').value;
+        const periodId = document.getElementById('editPeriodId').value;
+        const day = document.getElementById('editDay').value;
+        const teacherId = document.getElementById('teacherSelect').value;
+
+        performSave(periodId, day, subjectId, teacherId);
+    }
+
+    // 6. SHARED SAVE FUNCTION
+    function performSave(periodId, day, subjectId, teacherId) {
         const payload = {
             ClassId: @ViewBag.ClassId,
             PeriodId: parseInt(periodId),
-            Day: parseInt(day), 
-            SubjectId: parseInt(subjectId)
+            Day: parseInt(day),
+            SubjectId: parseInt(subjectId),
+            TeacherId: parseInt(teacherId)
         };
 
-        // Send to Server
         fetch('/Admin/Schedule/UpdateSlot', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         })
-        .then(response => {
-            if (response.ok) {
-                console.log("Saved successfully!");
+        .then(res => {
+            if(res.ok) {
                 location.reload();
             } else {
-                console.error("Server Error:", response);
-                alert("Server failed to save.");
+                return res.json().then(err => alert("Error: " + err.message));
             }
-        })
-        .catch(error => console.error("Network Error:", error));
+        });
     }
 </script>
