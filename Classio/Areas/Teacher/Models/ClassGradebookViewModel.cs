@@ -17,6 +17,11 @@ namespace Classio.Areas.Teacher.Models
         public string SubjectName { get; set; }
         public int SubjectId { get; set; }
 
+        //Sessions
+        public DateTime SelectedDate { get; set; }
+        public int SelectedPeriodId { get; set; }
+        public List<SessionOption> AvailableSessions { get; set; } = new();
+
         public List<StudentGradeItem> Students { get; set; } = new List<StudentGradeItem>();
     }
     public enum AttendanceState
@@ -47,5 +52,12 @@ namespace Classio.Areas.Teacher.Models
         public string Description { get; set; }
         public DateTime Date { get; set; }
         public string TeacherName { get; set; }
+    }
+    public class SessionOption
+    {
+        public DateTime Date { get; set; }
+        public int PeriodId { get; set; }
+        public string Label { get; set; }
+        public bool IsCurrent { get; set; }
     }
 }

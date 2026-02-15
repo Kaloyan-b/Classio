@@ -6,6 +6,47 @@
     ViewData["Title"] = "Class Session - " + Model.ClassName;
 }
 
+<div class="card mb-4 p-3 bg-light border-0">
+    <form method="get" asp-action="ClassGradebook" class="row g-3 align-items-end">
+        <input type="hidden" name="id" value="@Model.ClassId" />
+
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Select Session / Class:</label>
+            <select name="sessionKey" class="form-select" onchange="changeSession(this)">
+                @foreach (var session in Model.AvailableSessions)
+                {
+                    var val = $"{session.Date:yyyy-MM-dd}_{session.PeriodId}";
+                    var isSelected = session.Date == Model.SelectedDate && session.PeriodId == Model.SelectedPeriodId;
+
+                    <option value="@val" selected="@isSelected">
+                        @if (session.IsCurrent)
+                        {
+                            <span>🔴 (LIVE) </span>
+                        }
+                        @session.Label
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <div class="text-muted small">
+                Viewing Attendance for: <strong>@Model.SelectedDate.ToShortDateString()</strong>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    function changeSession(selectObject) {
+        var value = selectObject.value;
+        var parts = value.split('_');
+        var date = parts[0];
+        var period = parts[1];
+        window.location.href = `?id=@Model.ClassId&date=${date}&periodId=${period}`;
+    }
+</script>
+
 <div class="container-fluid mt-3">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
@@ -18,6 +59,8 @@
     <form asp-action="UpdateSession" method="post">
         <input type="hidden" asp-for="ClassId" />
         <input type="hidden" asp-for="SubjectId" />
+        <input type="hidden" asp-for="SelectedDate" />
+        <input type="hidden" asp-for="SelectedPeriodId" />
 
         <div class="card mb-3 border-primary shadow-sm">
             <div class="card-body py-2 bg-light d-flex align-items-center gap-3">
@@ -56,7 +99,9 @@
                             <td class="fw-bold">@Model.Students[i].StudentName</td>
 
                             <td>
-                                <input type="hidden" id="attn_val_@i" asp-for="Students[i].AttendanceToday" />
+                                <input type="hidden" id="attn_val_@i"
+                                       name="Students[@i].AttendanceToday"
+                                       value="@((int)Model.Students[i].AttendanceToday)" />
 
                                 <button type="button" class="btn btn-sm w-100 fw-bold"
                                         id="attn_btn_@i"
@@ -69,10 +114,8 @@
                                 <div class="d-flex flex-wrap gap-1">
                                     @foreach (var g in Model.Students[i].ExistingGrades)
                                     {
-                                        // Color logic
                                         var badgeColor = g.Value < 3 ? "bg-danger" : (g.Value >= 5 ? "bg-success" : "bg-primary");
 
-                                        // Pass data to modal via data-attributes
                                         <a href="#" class="badge @badgeColor text-decoration-none"
                                            data-bs-toggle="modal" data-bs-target="#editGradeModal"
                                            onclick="openGradeModal(@g.Id, @g.Value, '@g.Type', '@g.Description', '@g.Date.ToShortDateString()', '@g.TeacherName')">
@@ -110,6 +153,8 @@
                 <div class="modal-body">
                     <input type="hidden" id="modalGradeId" name="GradeId" />
                     <input type="hidden" name="ReturnClassId" value="@Model.ClassId" />
+                    <input type="hidden" name="ReturnDate" value="@Model.SelectedDate.ToString("yyyy-MM-dd")" />
+                    <input type="hidden" name="ReturnPeriodId" value="@Model.SelectedPeriodId" />
 
                     <div class="alert alert-secondary py-2 small mb-3">
                         <div><strong>Given by:</strong> <span id="modalTeacher"></span></div>
@@ -149,8 +194,6 @@
 
 @section Scripts {
     <script>
-        // --- 1. ATTENDANCE LOGIC ---
-        // We run this on page load to set initial button colors
         document.addEventListener("DOMContentLoaded", function() {
         @for (int i = 0; i < Model.Students.Count; i++)
         {
@@ -162,7 +205,9 @@
             var input = document.getElementById("attn_val_" + index);
             var currentVal = parseInt(input.value);
 
-            // Cycle: 0 (Present) -> 1 (Absent) -> 2 (Late) -> 0 (Present)
+            if (isNaN(currentVal)) currentVal = 0;
+
+            // Cycle
             var newVal = (currentVal + 1) % 3;
 
             input.value = newVal;
@@ -174,18 +219,17 @@
             var btn = document.getElementById("attn_btn_" + index);
 
             if (val == "0") {
-                btn.className = "btn btn-sm w-100 btn-outline-success"; // Present
+                btn.className = "btn btn-sm w-100 btn-outline-success"; 
                 btn.innerHTML = "<i class='bi bi-check-circle-fill'></i> Present";
             } else if (val == "1") {
-                btn.className = "btn btn-sm w-100 btn-danger"; // Absent
+                btn.className = "btn btn-sm w-100 btn-danger"; 
                 btn.innerHTML = "<i class='bi bi-x-circle-fill'></i> Absent";
             } else {
-                btn.className = "btn btn-sm w-100 btn-warning text-dark"; // Late
+                btn.className = "btn btn-sm w-100 btn-warning text-dark"; 
                 btn.innerHTML = "<i class='bi bi-clock-history'></i> Late";
             }
         }
 
-        // --- 2. MODAL LOGIC ---
         function openGradeModal(id, val, type, desc, date, teacher) {
             document.getElementById('modalGradeId').value = id;
             document.getElementById('modalValue').value = val;
@@ -193,9 +237,6 @@
             document.getElementById('modalDate').innerText = date;
             document.getElementById('modalTeacher').innerText = teacher;
 
-            // Set Dropdown (Requires matching the Enum string to the value)
-            // Note: Simplest way is loop select options or rely on text match if values differ.
-            // Better to pass INT for type if possible, but let's try selecting by text:
             var select = document.getElementById('modalType');
             for(var i=0; i < select.options.length; i++) {
                 if(select.options[i].text == type) {
