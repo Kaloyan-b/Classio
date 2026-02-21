@@ -150,7 +150,7 @@ namespace Classio.Areas.Identity.Pages.Account
                     switch (Input.Role)
                     {
                         case "Student":
-                            var student = new Student {FirstName = user.FirstName, LastName = user.LastName, UserId = user.Id};
+                            var student = new Classio.Models.Student {FirstName = user.FirstName, LastName = user.LastName, UserId = user.Id};
                             _context.Students.Add(student);
                             break;
                         case "Parent":

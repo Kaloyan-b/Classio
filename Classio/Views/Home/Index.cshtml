@@ -1,44 +1,200 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Welcome to Classio";
 }
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
 
+<style>
+    /* --- Modern Light Landing Page Styles --- */
+    .landing-bg {
+        /* Matching your container background but expanded */
+        background: linear-gradient(135deg, #f5f7fa 0%, #efede6 100%);
+        border-radius: 24px;
+        padding: 5rem 2rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        border: 1px solid rgba(244, 162, 97, 0.2);
+    }
 
-<div class="text-center">
+    .gradient-text {
+        /* Using your primary and secondary warm colors */
+        background: linear-gradient(to right, #E76F51, #F4A261);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+    }
+
+    .glass-card-light {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 1.5rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    }
+
+        .glass-card-light:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(244, 162, 97, 0.15);
+            border-color: rgba(244, 162, 97, 0.3);
+        }
+
+    .btn-primary-custom {
+        background-color: #F4A261;
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(244, 162, 97, 0.3);
+    }
+
+        .btn-primary-custom:hover {
+            background-color: #E76F51;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 111, 81, 0.4);
+        }
+
+    .btn-outline-custom {
+        color: #E76F51;
+        border: 2px solid #E76F51;
+        background: transparent;
+        transition: all 0.3s ease;
+    }
+
+        .btn-outline-custom:hover {
+            background-color: #E76F51;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    /* Decorative warm glowing blob */
+    .blob-warm {
+        position: absolute;
+        width: 350px;
+        height: 350px;
+        background: #F4A261;
+        border-radius: 50%;
+        filter: blur(90px);
+        opacity: 0.2;
+        top: -100px;
+        right: -50px;
+        z-index: 0;
+    }
+
+    .blob-secondary {
+        position: absolute;
+        width: 250px;
+        height: 250px;
+        background: #E76F51;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.15;
+        bottom: -50px;
+        left: -50px;
+        z-index: 0;
+    }
+
+    h1.display-3 {
+        color: #333;
+    }
+</style>
+
+<div class="py-2">
     @if (SignInManager.IsSignedIn(User))
     {
-
         var currentUser = await UserManager.GetUserAsync(User);
-        var currentRole = await UserManager.GetRolesAsync(currentUser);
+        var currentRoles = await UserManager.GetRolesAsync(currentUser);
 
-        <h2 class="nav-link text-black" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
-            Hi, @currentUser.FirstName @currentUser.LastName!
-        </h2>
-        @if(currentRole.Contains("Student"))
-        {
-            <a class="btn btn-lg btn-primary mt-3" href="@Url.Action("Dashboard", "Student")">Go to Student Dashboard</a>
-            
-        }
-        else if (currentRole.Contains("Parent"))
-        {
-            //?display the list of all related students and their dashboards
-            <a class="btn btn-lg btn-primary mt-3" href="@Url.Action("Dashboard", "Parent")">Go to Parent Dashboard</a>
-        }
-        else if (currentRole.Contains("Teacher"))
-        {
-            <a class="btn btn-lg btn-primary mt-3" href="@Url.Action("Dashboard", "Teacher")">Go to Teacher Dashboard</a>
-        }
-        else if (currentRole.Contains("Admin"))
-        {
-            <a class="btn btn-lg btn-primary mt-3" asp-area="Admin" asp-controller="Admin" asp-action="Index">Go to Admin Dashboard</a>
-        }
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8 text-center">
+                <div class="glass-card-light p-5">
+                    <h1 class="display-5 fw-bold mb-3" style="color: #E76F51;">Welcome back, @currentUser.FirstName!</h1>
+                    <p class="text-muted fs-5 mb-4">Your personalized command center is ready.</p>
 
+                    <div class="d-flex flex-column align-items-center gap-3">
+                        @if (currentRoles.Contains("Student"))
+                        {
+                            <a class="btn btn-lg btn-primary-custom rounded-pill px-5 py-3 w-75" href="@Url.Action("Dashboard", "Student")">
+                                <i class="bi bi-rocket-takeoff me-2"></i> Go to Student Dashboard
+                            </a>
+                        }
+                        else if (currentRoles.Contains("Parent"))
+                        {
+                            <a class="btn btn-lg btn-primary-custom rounded-pill px-5 py-3 w-75" href="@Url.Action("Dashboard", "Parent")">
+                                <i class="bi bi-people me-2"></i> Go to Parent Dashboard
+                            </a>
+                        }
+                        else if (currentRoles.Contains("Teacher"))
+                        {
+                            <a class="btn btn-lg btn-primary-custom rounded-pill px-5 py-3 w-75" href="@Url.Action("Dashboard", "Teacher")">
+                                <i class="bi bi-briefcase me-2"></i> Go to Teacher Dashboard
+                            </a>
+                        }
+                        else if (currentRoles.Contains("Admin"))
+                        {
+                            <a class="btn btn-lg btn-primary-custom rounded-pill px-5 py-3 w-75" asp-area="Admin" asp-controller="Admin" asp-action="Index">
+                                <i class="bi bi-shield-lock me-2"></i> Go to Admin Dashboard
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
     }
     else
     {
-        <a class="btn btn-lg btn-outline-light m-2" href="/Identity/Account/Register">Sign up!</a>
-        <a class="btn btn-lg btn-outline-light m-2" href="/Identity/Account/Login">Already have an account?</a>
+        <div class="landing-bg">
+            <div class="blob-warm"></div>
+            <div class="blob-secondary"></div>
+
+            <div class="row align-items-center position-relative z-1">
+                <div class="col-lg-6 mb-5 mb-lg-0 text-center text-lg-start pe-lg-5">
+                    <h1 class="display-3 fw-bolder mb-4">
+                        Education, <br />
+                        <span class="gradient-text">Elevated.</span>
+                    </h1>
+                    <p class="lead text-muted mb-5 fs-4">
+                        Say goodbye to outdated portals. Experience a fast, intelligent, and beautifully designed ecosystem for modern schools.
+                    </p>
+                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-lg-start">
+                        <a class="btn btn-primary-custom btn-lg rounded-pill px-5 py-3 fw-bold" href="/Identity/Account/Register">
+                            Get Started Now
+                        </a>
+                        <a class="btn btn-outline-custom btn-lg rounded-pill px-5 py-3 fw-bold" href="/Identity/Account/Login">
+                            Log In
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="glass-card-light p-4 text-center">
+                                <i class="bi bi-graph-up-arrow display-4 mb-3" style="color: #F4A261;"></i>
+                                <h4 class="fw-bold" style="color: #E76F51;">Real-time Analytics</h4>
+                                <p class="text-muted mb-0">Track performance, attendance, and school-wide rankings instantly.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="glass-card-light p-4 text-center h-100">
+                                <i class="bi bi-lightning-charge display-5 mb-3" style="color: #F4A261;"></i>
+                                <h5 class="fw-bold" style="color: #E76F51;">Fast & Fluid</h5>
+                                <p class="small text-muted mb-0">No more waiting for pages to load. Everything is just a click away.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="glass-card-light p-4 text-center h-100">
+                                <i class="bi bi-shield-check display-5 mb-3" style="color: #F4A261;"></i>
+                                <h5 class="fw-bold" style="color: #E76F51;">Role-Based</h5>
+                                <p class="small text-muted mb-0">Custom tailored views for Students, Teachers, and Parents.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     }
 </div>

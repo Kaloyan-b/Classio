@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Classio.Core.Models;
+using Classio.Models;
 using Classio.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 

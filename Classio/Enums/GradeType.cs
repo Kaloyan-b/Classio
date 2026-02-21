@@ -1,4 +1,4 @@
-namespace Classio.Core.Models
+namespace Classio.Models
 {
     public enum GradeType
     {

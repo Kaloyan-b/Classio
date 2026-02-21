@@ -1,0 +1,59 @@
+﻿@model Classio.Areas.Student.Models.StudentDashboardViewModel
+
+@{
+    ViewData["Title"] = "My Dashboard";
+}
+
+<div class="container py-4">
+    <h2 class="mb-4">Welcome, @Model.StudentName!</h2>
+
+    <div class="row g-3">
+
+        <div class="col-md-4">
+            <a asp-action="Grades" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm text-white hover-zoom" style="background-color: #0d6efd;">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-mortarboard fs-1"></i>
+                        <h3 class="display-5 fw-bold mt-2">@Model.OverallAverage.ToString("0.00")</h3>
+                        <p class="mb-0 fs-6 opacity-75">Overall Average</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm text-white hover-zoom" style="background-color: #6f42c1;">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-trophy fs-1"></i>
+                    <h3 class="display-5 fw-bold mt-2">@Model.FormattedRank</h3>
+                    <p class="mb-0 fs-6 opacity-75">Out of @Model.TotalStudents Students</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <a asp-action="Attendance" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm text-white hover-zoom" style="background-color: #dc3545;">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-calendar-x fs-1"></i>
+                        <h3 class="display-5 fw-bold mt-2">@Model.WeightedAbsences</h3>
+                        <p class="mb-0 fs-6 opacity-75">Weighted Absences</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .hover-zoom {
+        transition: transform 0.2s ease-in-out;
+        cursor: pointer;
+    }
+
+        .hover-zoom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+        }
+</style>

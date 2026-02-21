@@ -1,4 +1,4 @@
-﻿using Classio.Core.Models;
+﻿using Classio.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace Classio.Areas.Teacher.Models

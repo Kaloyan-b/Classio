@@ -1,5 +1,5 @@
 ﻿using Classio.Areas.Teacher.Models;
-using Classio.Core.Models;
+using Classio.Models;
 using Classio.Data;
 using Classio.Models;
 using Microsoft.AspNetCore.Authorization;
