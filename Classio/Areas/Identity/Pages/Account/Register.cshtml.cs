@@ -154,7 +154,7 @@ namespace Classio.Areas.Identity.Pages.Account
                             _context.Students.Add(student);
                             break;
                         case "Parent":
-                            var parent = new Parent {FirstName = user.FirstName, LastName = user.LastName, UserId = user.Id};
+                            var parent = new Classio.Models.Parent {FirstName = user.FirstName, LastName = user.LastName, UserId = user.Id};
                             _context.Parents.Add(parent);
                             break;
                     }

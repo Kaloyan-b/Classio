@@ -1,0 +1,63 @@
+﻿@model Classio.Areas.Parent.Models.ParentDashboardViewModel
+
+@{
+    ViewData["Title"] = "Parent Dashboard";
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0" style="color: #E76F51;">Welcome, @Model.ParentName!</h2>
+            <p class="text-muted">Here is the overview of your children's performance.</p>
+        </div>
+    </div>
+
+    @if (!Model.Children.Any())
+    {
+        <div class="glass-card-light p-5 text-center shadow-sm border-0">
+            <i class="bi bi-people display-1 mb-3 opacity-50" style="color: #F4A261;"></i>
+            <h3 class="fw-bold" style="color: #333;">No students linked yet</h3>
+            <p class="text-muted mb-4">It looks like we haven't connected your account to your children yet. Please contact the administration to link your profiles.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var child in Model.Children)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="glass-card-light h-100 p-4 d-flex flex-column border-0 shadow-sm">
+
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="bg-white rounded-circle d-flex justify-content-center align-items-center shadow-sm me-3" style="width: 50px; height: 50px; border: 2px solid #F4A261;">
+                                <i class="bi bi-person-fill fs-3" style="color: #E76F51;"></i>
+                            </div>
+                            <h4 class="fw-bold mb-0" style="color: #333;">@child.FullName</h4>
+                        </div>
+
+                        <div class="row g-2 mb-4 flex-grow-1">
+                            <div class="col-6">
+                                <div class="p-3 rounded text-center h-100" style="background: rgba(244, 162, 97, 0.1);">
+                                    <i class="bi bi-mortarboard fs-4 mb-1" style="color: #F4A261;"></i>
+                                    <h5 class="fw-bold mb-0">@child.OverallAverage.ToString("0.00")</h5>
+                                    <small class="text-muted">Avg Grade</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 rounded text-center h-100" style="background: rgba(231, 111, 81, 0.1);">
+                                    <i class="bi bi-calendar-x fs-4 mb-1" style="color: #E76F51;"></i>
+                                    <h5 class="fw-bold mb-0">@child.WeightedAbsences</h5>
+                                    <small class="text-muted">Absences</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a asp-area="Parent" asp-controller="Dashboard" asp-action="ChildDetails" asp-route-studentId="@child.StudentId" class="btn btn-outline-custom w-100 rounded-pill fw-bold mt-auto">
+                            View Full Report <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
