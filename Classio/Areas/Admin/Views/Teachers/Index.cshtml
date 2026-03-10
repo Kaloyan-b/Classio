@@ -1,45 +1,98 @@
 ﻿@model IEnumerable<Classio.Models.Teacher>
+
 @{
     ViewData["Title"] = "Manage Teachers";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Teachers Management</h2>
-    <button type="button" class="btn btn-primary" onclick="loadModal('@Url.Action("Create")')">
-        + Add New Teacher
-    </button>
-</div>
-<div class="table-responsive">
-    <table class="table table-striped table-hover shadow-sm bg-white rounded">
-        <thead class="table-dark">
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Subject</th>
-                <th>School</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.FirstName @item.LastName</td>
-                    <td>@item.User?.Email</td>
-                    <td>@item.Subject?.Name</td>
-                    <td>@item.School?.Name</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-warning"
-                                onclick="loadModal('@Url.Action("Edit", new { id = item.Id })')">
-                            Edit Info
-                        </button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0" style="color: #4A148C;">Teachers Management</h2>
+            <p class="text-muted">View, add, and manage teacher profiles and subject assignments.</p>
+        </div>
+        <button type="button" class="btn fw-bold px-4 py-2 shadow-sm" style="background-color: #7E57C2; color: white; border-radius: 8px;" onclick="loadModal('@Url.Action("Create")')">
+            <i class="bi bi-person-plus-fill me-1"></i> Add Teacher
+        </button>
+    </div>
 
+    <div class="glass-card-light border-0 shadow-sm overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle" style="background: transparent;">
+                <thead style="background: rgba(74, 20, 140, 0.05);">
+                    <tr>
+                        <th class="py-3 px-4 fw-bold" style="color: #4A148C;">Name</th>
+                        <th class="py-3 px-4 fw-bold" style="color: #4A148C;">Email</th>
+                        <th class="py-3 px-4 fw-bold" style="color: #4A148C;">Subject</th>
+                        <th class="py-3 px-4 fw-bold" style="color: #4A148C;">School</th>
+                        <th class="py-3 px-4 fw-bold text-end" style="color: #4A148C;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                No teachers found in the system.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                                <td class="py-3 px-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-white rounded-circle d-flex justify-content-center align-items-center shadow-sm me-3 fw-bold" style="width: 40px; height: 40px; border: 2px solid #7E57C2; color: #4A148C; font-size: 0.9rem;">
+                                            @item.FirstName.Substring(0, 1)@item.LastName.Substring(0, 1)
+                                        </div>
+                                        <span class="fw-bold" style="color: #333;">@item.FirstName @item.LastName</span>
+                                    </div>
+                                </td>
+
+                                <td class="py-3 px-4">
+                                    @if (item.User != null && !string.IsNullOrEmpty(item.User.Email))
+                                    {
+                                        <a href="mailto:@item.User.Email" class="text-decoration-none text-muted">
+                                            <i class="bi bi-envelope me-1"></i> @item.User.Email
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill bg-warning text-dark" style="font-size: 0.85rem;">No User Account</span>
+                                    }
+                                </td>
+
+                                <td class="py-3 px-4">
+                                    @if (item.Subject != null)
+                                    {
+                                        <span class="badge rounded-pill" style="background-color: #7E57C2; font-size: 0.85rem;">@item.Subject.Name</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted fst-italic small">Unassigned</span>
+                                    }
+                                </td>
+
+                                <td class="py-3 px-4 text-muted">
+                                    @(item.School?.Name ?? "N/A")
+                                </td>
+
+                                <td class="py-3 px-4 text-end">
+                                    <div class="btn-group shadow-sm">
+                                        <button type="button" class="btn btn-sm btn-light border-0 fw-bold" onclick="loadModal('@Url.Action("Edit", new { id = item.Id })')" title="Edit Teacher">
+                                            <i class="bi bi-pencil-square me-1" style="color: #7E57C2;"></i> Edit Info
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" id="teacherModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">

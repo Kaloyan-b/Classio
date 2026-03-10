@@ -1,0 +1,55 @@
+﻿@model Classio.Areas.Admin.Models.AdminParentEditViewModel
+
+@{
+    ViewData["Title"] = "Edit Parent";
+}
+
+<div class="py-4 max-w-custom mx-auto" style="max-width: 800px;">
+    <div class="d-flex align-items-center mb-4">
+        <a asp-action="Index" class="btn btn-outline-custom rounded-circle me-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;">
+            <i class="bi bi-arrow-left fs-5"></i>
+        </a>
+        <div>
+            <h2 class="fw-bold mb-0" style="color: #264653;">Edit Parent Profile</h2>
+            <p class="text-muted mb-0">Update account details and manage linked children.</p>
+        </div>
+    </div>
+
+    <div class="glass-card-light p-4 p-md-5 border-0 shadow-sm">
+        <form asp-action="Edit">
+            <input type="hidden" asp-for="ParentId" />
+
+            <div class="mb-4">
+                <label class="form-label fw-bold text-muted">Account Email</label>
+                <input type="text" class="form-control bg-light" value="@Model.Email" readonly disabled />
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label asp-for="FirstName" class="form-label fw-bold" style="color: #264653;">First Name</label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="LastName" class="form-label fw-bold" style="color: #264653;">Last Name</label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="mb-5 p-4 rounded" style="background: rgba(42, 157, 143, 0.05); border: 1px solid rgba(42, 157, 143, 0.2);">
+                <label asp-for="SelectedStudentIds" class="form-label fw-bold" style="color: #2A9D8F;">
+                    <i class="bi bi-link-45deg me-1"></i> Linked Students
+                </label>
+                <p class="small text-muted mb-2">Hold down <strong>Ctrl</strong> (or <strong>Cmd</strong> on Mac) to select multiple students.</p>
+                <select asp-for="SelectedStudentIds" asp-items="Model.AvailableStudents" class="form-select" multiple="multiple" style="height: 150px;"></select>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn fw-bold py-2 text-white shadow-sm" style="background-color: #2A9D8F; border-radius: 8px;">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

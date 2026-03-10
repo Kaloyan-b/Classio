@@ -1,0 +1,85 @@
+﻿@model IEnumerable<Classio.Areas.Admin.Models.AdminParentListViewModel>
+
+@{
+    ViewData["Title"] = "Manage Parents";
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0" style="color: #264653;">Manage Parents</h2>
+            <p class="text-muted">View and manage all parent accounts in the system.</p>
+        </div>
+        <a asp-action="Create" class="btn fw-bold px-4 py-2 shadow-sm" style="background-color: #2A9D8F; color: white; border-radius: 8px;">
+            <i class="bi bi-plus-lg me-1"></i> Add Parent
+        </a>
+    </div>
+
+    <div class="glass-card-light border-0 shadow-sm overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle" style="background: transparent;">
+                <thead style="background: rgba(38, 70, 83, 0.05);">
+                    <tr>
+                        <th class="py-3 px-4 fw-bold" style="color: #264653;">Name</th>
+                        <th class="py-3 px-4 fw-bold" style="color: #264653;">Email Account</th>
+                        <th class="py-3 px-4 fw-bold text-center" style="color: #264653;">Linked Children</th>
+                        <th class="py-3 px-4 fw-bold text-end" style="color: #264653;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                No parents found in the system.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var parent in Model)
+                        {
+                            <tr style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                                <td class="py-3 px-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-white rounded-circle d-flex justify-content-center align-items-center shadow-sm me-3" style="width: 40px; height: 40px; border: 2px solid #2A9D8F;">
+                                            <i class="bi bi-person-fill" style="color: #264653;"></i>
+                                        </div>
+                                        <span class="fw-bold" style="color: #333;">@parent.FirstName @parent.LastName</span>
+                                    </div>
+                                </td>
+                                <td class="py-3 px-4 text-muted">
+                                    <i class="bi bi-envelope me-1"></i> @parent.Email
+                                </td>
+                                <td class="py-3 px-4 text-center">
+                                    @if (parent.LinkedChildrenCount > 0)
+                                    {
+                                        <span class="badge rounded-pill" style="background-color: #E76F51; font-size: 0.85rem;">
+                                            @parent.LinkedChildrenCount Student(s)
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill bg-secondary" style="font-size: 0.85rem;">
+                                            None Linked
+                                        </span>
+                                    }
+                                </td>
+                                <td class="py-3 px-4 text-end">
+                                    <div class="btn-group shadow-sm">
+                                        <a asp-action="Edit" asp-route-id="@parent.ParentId" class="btn btn-sm btn-light border-0" title="Edit Parent">
+                                            <i class="bi bi-pencil-square text-primary"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@parent.ParentId" class="btn btn-sm btn-light border-0" title="Delete Parent">
+                                            <i class="bi bi-trash text-danger"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

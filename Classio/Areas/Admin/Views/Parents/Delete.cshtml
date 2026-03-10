@@ -1,0 +1,29 @@
+﻿@model Classio.Models.Parent
+
+@{
+    ViewData["Title"] = "Delete Parent";
+}
+
+<div class="py-4 d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="glass-card-light p-4 p-md-5 border-0 shadow-sm text-center" style="max-width: 500px; width: 100%;">
+
+        <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-flex justify-content-center align-items-center mx-auto mb-4" style="width: 80px; height: 80px;">
+            <i class="bi bi-exclamation-triangle display-4"></i>
+        </div>
+
+        <h2 class="fw-bold mb-3" style="color: #333;">Delete Parent?</h2>
+        <p class="text-muted mb-4">
+            Are you sure you want to delete the profile for <strong>@Model.FirstName @Model.LastName</strong>?
+            Any linked students will be detached from this parent, but the student records themselves will not be deleted.
+            <br /><br />
+            <span class="text-danger fw-bold">This action cannot be undone.</span>
+        </p>
+
+        <form asp-action="Delete" class="d-flex justify-content-center gap-3">
+            <input type="hidden" asp-for="Id" />
+            <a asp-action="Index" class="btn btn-light px-4 py-2 fw-bold text-muted border">Cancel</a>
+            <button type="submit" class="btn btn-danger px-4 py-2 fw-bold shadow-sm">Yes, Delete Profile</button>
+        </form>
+
+    </div>
+</div>
