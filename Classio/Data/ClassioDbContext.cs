@@ -22,11 +22,25 @@ namespace Classio.Data
         public DbSet<Absence> Absences { get; set; } = null!;
         public DbSet<ClassPeriod> ClassPeriods { get; set; } = null!;
         public DbSet<ScheduleSlot> ScheduleSlots { get; set; } = null!;
+        public DbSet<ChatMessage> ChatMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            //ChatMessages cascade
+            modelBuilder.Entity<ChatMessage>()
+        .HasOne(m => m.Sender)       
+        .WithMany()                
+        .HasForeignKey(m => m.SenderId) 
+        .OnDelete(DeleteBehavior.Restrict); 
+
+            // Reciver relationship
+            modelBuilder.Entity<ChatMessage>()
+                .HasOne(m => m.Receiver)     
+                .WithMany()                  
+                .HasForeignKey(m => m.ReceiverId) 
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Teacher - Subject
 

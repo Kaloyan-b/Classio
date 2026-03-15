@@ -9,6 +9,29 @@
     <link rel="stylesheet" href="~/Classio.styles.css" asp-append-version="true" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+<div class="offcanvas offcanvas-end shadow" tabindex="-1" id="chatOffcanvas" aria-labelledby="chatOffcanvasLabel" style="width: 350px; border-left: none;">
+    <div class="offcanvas-header text-white" style="background-color: #2B2D42;">
+        <h5 class="offcanvas-title mb-0" id="chatOffcanvasLabel"><i class="bi bi-chat-left-text me-2"></i> Messages</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+
+    <div class="offcanvas-body d-flex flex-column p-0" style="background-color: #f8f9fa;">
+
+        <div id="chatMessages" class="flex-grow-1 overflow-auto p-3" style="max-height: calc(100vh - 130px);">
+            <div class="text-center text-muted small mt-2 mb-3">Welcome to Classio Chat</div>
+        </div>
+
+        <div class="p-3 bg-white border-top shadow-sm mt-auto">
+            <div class="input-group">
+                <input type="hidden" id="senderNameInput" value="@User.Identity.Name ?? " Guest"" />
+                <input type="text" id="messageInput" class="form-control rounded-start-pill" placeholder="Type a message..." autocomplete="off">
+                <button class="btn btn-primary rounded-end-pill" type="button" id="sendButton" style="background-color: #0077B6; border: none;">
+                    <i class="bi bi-send-fill"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 <body>
     <header>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -28,6 +51,12 @@
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">About</a>
                         </li>
                     </ul>
+                    <button class="btn btn-light position-relative rounded-circle shadow-sm me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#chatOffcanvas" style="width: 40px; height: 40px;">
+                        <i class="bi bi-chat-dots" style="color: #2B2D42;"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                            <span class="visually-hidden">New alerts</span>
+                        </span>
+                    </button>
                     <partial name="_LoginPartial" />
                 </div>
             </div>
@@ -51,3 +80,67 @@
 
 </body>
 </html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
+<script>
+    "use strict";
+
+    // 1. Build the connection to the Hub
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/chatHub")
+        .build();
+
+    // Disable send button until connection is established
+    document.getElementById("sendButton").disabled = true;
+
+    // 2. What happens when a message is received
+    connection.on("ReceiveMessage", function (user, message) {
+        const chatMessages = document.getElementById("chatMessages");
+        const currentUser = document.getElementById("senderNameInput").value;
+
+        const isMine = user === currentUser;
+
+        // Build the message HTML
+        const msgDiv = document.createElement("div");
+        msgDiv.className = `d-flex flex-column mb-3 ${isMine ? 'align-items-end' : 'align-items-start'}`;
+
+        msgDiv.innerHTML = `
+            <small class="text-muted mb-1" style="font-size: 0.7rem;">${user}</small>
+            <div class="p-2 rounded-3 shadow-sm ${isMine ? 'bg-primary text-white' : 'bg-white text-dark'}" style="max-width: 85%;">
+                ${message}
+            </div>
+        `;
+
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to bottom
+    });
+
+    // 3. Start the connection
+    connection.start().then(function () {
+        document.getElementById("sendButton").disabled = false;
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
+
+    // 4. Handle sending messages
+    document.getElementById("sendButton").addEventListener("click", function (event) {
+        const user = document.getElementById("senderNameInput").value;
+        const message = document.getElementById("messageInput").value;
+
+        if(message.trim() === "") return; // Don't send empty messages
+
+        connection.invoke("SendMessage", user, message).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        document.getElementById("messageInput").value = ""; // Clear input
+        event.preventDefault();
+    });
+
+    // Allow pressing "Enter" to send
+    document.getElementById("messageInput").addEventListener("keypress", function (e) {
+        if (e.key === 'Enter') {
+            document.getElementById("sendButton").click();
+        }
+    });
+</script>

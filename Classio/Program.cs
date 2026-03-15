@@ -40,7 +40,11 @@ public class Program
         builder.Services.AddControllersWithViews();
         builder.Services.AddRazorPages();
 
+        builder.Services.AddSignalR();
+
         var app = builder.Build();
+
+        app.MapHub<Classio.Hubs.ChatHub>("/chatHub");
 
         // --- Role  Seeding ---
         using (var scope = app.Services.CreateScope())
