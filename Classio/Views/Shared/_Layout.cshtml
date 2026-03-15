@@ -7,34 +7,41 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Classio.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-<div class="offcanvas offcanvas-end shadow" tabindex="-1" id="chatOffcanvas" aria-labelledby="chatOffcanvasLabel" style="width: 350px; border-left: none;">
-    <div class="offcanvas-header text-white" style="background-color: #2B2D42;">
-        <h5 class="offcanvas-title mb-0" id="chatOffcanvasLabel"><i class="bi bi-chat-left-text me-2"></i> Messages</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-
-    <div class="offcanvas-body d-flex flex-column p-0" style="background-color: #f8f9fa;">
-
-        <div id="chatMessages" class="flex-grow-1 overflow-auto p-3" style="max-height: calc(100vh - 130px);">
-            <div class="text-center text-muted small mt-2 mb-3">Welcome to Classio Chat</div>
+<body>
+    <div class="offcanvas offcanvas-end shadow" tabindex="-1" id="chatOffcanvas" aria-labelledby="chatOffcanvasLabel" style="width: 350px; border-left: none;">
+        <div class="offcanvas-header text-white" style="background-color: #2B2D42;">
+            <h5 class="offcanvas-title mb-0" id="chatOffcanvasLabel"><i class="bi bi-chat-left-text me-2"></i> Messages</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
 
-        <div class="p-3 bg-white border-top shadow-sm mt-auto">
-            <div class="input-group">
-                <input type="hidden" id="senderNameInput" value="@User.Identity.Name ?? " Guest"" />
-                <input type="text" id="messageInput" class="form-control rounded-start-pill" placeholder="Type a message..." autocomplete="off">
-                <button class="btn btn-primary rounded-end-pill" type="button" id="sendButton" style="background-color: #0077B6; border: none;">
-                    <i class="bi bi-send-fill"></i>
-                </button>
+        <div class="offcanvas-body d-flex flex-column p-0" style="background-color: #f8f9fa;">
+
+            <div class="p-2 border-bottom bg-light text-center">
+                <p class="small text-muted mb-1">Contacts</p>
+                <div id="contactListArea" style="max-height: 150px; overflow-y: auto;">
+                    <span class="small text-muted">Loading contacts...</span>
+                </div>
+            </div>
+
+            <div id="chatMessages" class="flex-grow-1 overflow-auto p-3" style="max-height: calc(100vh - 170px);">
+                <div class="text-center text-muted small mt-2 mb-3">Welcome to Classio Chat. Click a contact above to start!</div>
+            </div>
+
+            <div class="p-3 bg-white border-top shadow-sm mt-auto">
+                <div class="input-group">
+                    <input type="text" id="messageInput" class="form-control rounded-start-pill" placeholder="Type a message..." autocomplete="off">
+                    <button class="btn btn-primary rounded-end-pill" type="button" id="sendButton" style="background-color: #0077B6; border: none;">
+                        <i class="bi bi-send-fill"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<body>
+
     <header>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm glass-navbar fixed-top">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Classio</a>
@@ -53,94 +60,160 @@
                     </ul>
                     <button class="btn btn-light position-relative rounded-circle shadow-sm me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#chatOffcanvas" style="width: 40px; height: 40px;">
                         <i class="bi bi-chat-dots" style="color: #2B2D42;"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
-                            <span class="visually-hidden">New alerts</span>
-                        </span>
                     </button>
                     <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
+
+    <div class="container" style="margin-top: 80px;">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-@*     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - Classio - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer> *@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 
-</body>
-</html>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <script>
+        "use strict";
 
-<script>
-    "use strict";
+        let currentContactId = null;
 
-    // 1. Build the connection to the Hub
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/chatHub")
-        .build();
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chatHub")
+            .build();
 
-    // Disable send button until connection is established
-    document.getElementById("sendButton").disabled = true;
+        document.getElementById("sendButton").disabled = true;
 
-    // 2. What happens when a message is received
-    connection.on("ReceiveMessage", function (user, message) {
-        const chatMessages = document.getElementById("chatMessages");
-        const currentUser = document.getElementById("senderNameInput").value;
-
-        const isMine = user === currentUser;
-
-        // Build the message HTML
-        const msgDiv = document.createElement("div");
-        msgDiv.className = `d-flex flex-column mb-3 ${isMine ? 'align-items-end' : 'align-items-start'}`;
-
-        msgDiv.innerHTML = `
-            <small class="text-muted mb-1" style="font-size: 0.7rem;">${user}</small>
-            <div class="p-2 rounded-3 shadow-sm ${isMine ? 'bg-primary text-white' : 'bg-white text-dark'}" style="max-width: 85%;">
-                ${message}
-            </div>
-        `;
-
-        chatMessages.appendChild(msgDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to bottom
-    });
-
-    // 3. Start the connection
-    connection.start().then(function () {
-        document.getElementById("sendButton").disabled = false;
-    }).catch(function (err) {
-        return console.error(err.toString());
-    });
-
-    // 4. Handle sending messages
-    document.getElementById("sendButton").addEventListener("click", function (event) {
-        const user = document.getElementById("senderNameInput").value;
-        const message = document.getElementById("messageInput").value;
-
-        if(message.trim() === "") return; // Don't send empty messages
-
-        connection.invoke("SendMessage", user, message).catch(function (err) {
-            return console.error(err.toString());
+        connection.start().then(function () {
+            document.getElementById("sendButton").disabled = false;
+            console.log("SignalR Connected.");
+        }).catch(function (err) {
+            console.error("SignalR Connection Error: ", err.toString());
         });
 
-        document.getElementById("messageInput").value = ""; // Clear input
-        event.preventDefault();
-    });
+        connection.on("ReceivePrivateMessage", function (senderId, message) {
+            if (currentContactId === senderId) {
+                appendMessageBubble(message, false);
+                scrollToBottom();
+            } else {
+                console.log("New message from " + senderId);
+            }
+        });
 
-    // Allow pressing "Enter" to send
-    document.getElementById("messageInput").addEventListener("keypress", function (e) {
-        if (e.key === 'Enter') {
-            document.getElementById("sendButton").click();
+        document.getElementById("sendButton").addEventListener("click", function (event) {
+            event.preventDefault();
+
+            const messageInput = document.getElementById("messageInput");
+            const message = messageInput.value.trim();
+
+            if (message === "" || currentContactId === null) {
+                if (currentContactId === null) alert("Please select a contact to chat with first!");
+                return;
+            }
+
+            connection.invoke("SendPrivateMessage", currentContactId, message).catch(function (err) {
+                console.error(err.toString());
+            });
+
+            appendMessageBubble(message, true);
+            messageInput.value = "";
+            scrollToBottom();
+        });
+
+        document.getElementById("messageInput").addEventListener("keypress", function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById("sendButton").click();
+            }
+        });
+
+        window.openChat = function(contactId, contactName) {
+            currentContactId = contactId;
+            document.getElementById("chatOffcanvasLabel").innerHTML = `<i class="bi bi-chat-left-text me-2"></i> Chat with ${contactName}`;
+
+            const chatBox = document.getElementById("chatMessages");
+            chatBox.innerHTML = '<div class="text-center text-muted small mt-2 mb-3">Loading history...</div>';
+
+            fetch(`/Chat/GetChatHistory?contactId=${contactId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error("Failed to load history");
+                    return response.json();
+                })
+                .then(messages => {
+                    chatBox.innerHTML = '';
+                    if(messages.length === 0) {
+                        chatBox.innerHTML = '<div class="text-center text-muted small mt-2 mb-3">No past messages. Start the conversation!</div>';
+                    } else {
+                        messages.forEach(msg => {
+                            appendMessageBubble(msg.content, msg.isMine);
+                        });
+                    }
+                    scrollToBottom();
+                })
+                .catch(error => {
+                    console.error("Error loading history:", error);
+                    chatBox.innerHTML = '<div class="text-center text-danger small mt-2 mb-3">Failed to load messages. Are you logged in?</div>';
+                });
+        };
+
+        function appendMessageBubble(messageText, isMine) {
+            const chatBox = document.getElementById("chatMessages");
+            const msgDiv = document.createElement("div");
+
+            msgDiv.className = `d-flex align-items-start mb-3 ${isMine ? 'justify-content-end' : ''}`;
+
+            if (isMine) {
+                msgDiv.innerHTML = `
+                    <div class="p-3 shadow-sm text-white" style="background: #0077B6; border-radius: 15px 0px 15px 15px; max-width: 85%; word-wrap: break-word;">
+                        <p class="mb-0">${messageText}</p>
+                    </div>
+                `;
+            } else {
+                msgDiv.innerHTML = `
+                    <div class="p-3 shadow-sm" style="background: white; border-radius: 0px 15px 15px 15px; max-width: 85%; word-wrap: break-word;">
+                        <p class="mb-0 text-dark">${messageText}</p>
+                    </div>
+                `;
+            }
+
+            chatBox.appendChild(msgDiv);
         }
-    });
-</script>
+
+        function scrollToBottom() {
+            const chatBox = document.getElementById("chatMessages");
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+            function loadContacts() {
+                fetch('/Chat/GetContacts')
+                    .then(response => response.json())
+                    .then(users => {
+                        const contactArea = document.getElementById("contactListArea");
+                        contactArea.innerHTML = ''; 
+
+                        if(users.length === 0) {
+                            contactArea.innerHTML = '<span class="small text-muted">No other users found.</span>';
+                            return;
+                        }
+
+                        users.forEach(u => {
+                            contactArea.innerHTML += `
+                                <button class="btn btn-sm btn-outline-primary w-100 mb-2" onclick="openChat('${u.id}', '${u.name}')">
+                                    <i class="bi bi-person-fill"></i> ${u.name}
+                                </button>
+                            `;
+                        });
+                    })
+                    .catch(err => console.error("Could not load contacts", err));
+            }
+            document.addEventListener("DOMContentLoaded", function() {
+                loadContacts();
+            });
+    </script>
+</body>
+</html>
