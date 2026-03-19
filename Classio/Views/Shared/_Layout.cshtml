@@ -8,66 +8,550 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Classio.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+
+        /* ── Base — keep font sizes at browser default (16px) ── */
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'DM Sans', system-ui, sans-serif;
+            font-size: 1rem;
+            background: #FBF8F4;
+        }
+
+        /* ── Floating Navbar ──────────────────────────────────── */
+        .glass-navbar {
+            position: fixed !important;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 48px);
+            max-width: 1100px;
+            height: 56px;
+            background: rgba(255,255,255,0.88) !important;
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(0,0,0,0.07) !important;
+            border-radius: 18px !important;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+            padding: 0 20px !important;
+            /* Prevent collapse from breaking pill on desktop */
+            flex-wrap: nowrap !important;
+            align-items: center;
+        }
+
+        /* On mobile let the navbar grow to fit the open menu */
+        @@media (max-width: 575px) {
+            .glass-navbar
+
+        {
+            height: auto;
+            min-height: 56px;
+            align-items: flex-start;
+            padding-top: 10px !important;
+            padding-bottom: 0 !important;
+        }
+
+        }
+
+        /* Logo */
+        .glass-navbar .navbar-brand {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #F5A623 !important;
+            letter-spacing: -0.03em;
+            padding: 0;
+            flex-shrink: 0;
+        }
+
+        /* Hamburger — use BI icon so it's visible on any bg */
+        .glass-navbar .navbar-toggler {
+            border: none !important;
+            padding: 4px 6px !important;
+            border-radius: 8px !important;
+            background: #F0EEE9 !important;
+            box-shadow: none !important;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+
+            .glass-navbar .navbar-toggler:focus {
+                box-shadow: none !important;
+            }
+
+            .glass-navbar .navbar-toggler i {
+                font-size: 1.15rem;
+                color: #F5A623;
+                display: block;
+                line-height: 1;
+            }
+
+        /* Collapse — on mobile give it a solid background + rounded bottom */
+        @@@@media (max-width: 575px) {
+            .glass-navbar .navbar-collapse
+
+        {
+            width: 100%;
+            background: rgba(255,255,255,0.98);
+            border-top: 1px solid #F0EEE9;
+            border-radius: 0 0 18px 18px;
+            margin-top: 10px;
+            padding: 8px 0 12px;
+            flex-direction: column !important;
+            align-items: center;
+        }
+
+        }
+
+        /* ── Centered nav links ───────────────────────────────── */
+        .nav-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        @@@@media (max-width: 575px) {
+            .nav-center
+
+        {
+            position: static;
+            transform: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 4px 0;
+            gap: 2px;
+        }
+
+        }
+
+        .glass-navbar .nav-link {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #999 !important;
+            padding: 6px 14px !important;
+            border-radius: 10px;
+            transition: all 0.15s;
+            letter-spacing: -0.01em;
+            white-space: nowrap;
+        }
+
+            .glass-navbar .nav-link:hover {
+                color: #1C1C1E !important;
+                background: rgba(0,0,0,0.05);
+            }
+
+            .glass-navbar .nav-link.active {
+                color: #1C1C1E !important;
+                background: #F0EEE9;
+                font-weight: 600;
+            }
+
+        /* ── Right side ───────────────────────────────────────── */
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        @@media (max-width: 575px) {
+            .nav-right
+
+        {
+            margin-left: 0;
+            width: 100%;
+            justify-content: center;
+            padding-top: 4px;
+        }
+
+        .nav-email {
+            display: none;
+        }
+
+        }
+
+        .nav-email {
+            font-size: 0.78rem;
+            color: #AAA;
+            font-weight: 500;
+        }
+
+        /* Chat icon button */
+        .chat-icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #F0EEE9;
+            border: none;
+            cursor: pointer;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            flex-shrink: 0;
+            padding: 0 !important;
+        }
+
+            .chat-icon-btn i {
+                font-size: 1rem;
+                color: #F5A623;
+                line-height: 1;
+                display: block;
+            }
+
+            .chat-icon-btn:hover {
+                background: #F5A623;
+                transform: scale(1.05);
+            }
+
+                .chat-icon-btn:hover i {
+                    color: white;
+                }
+
+        /* Logout — targets whatever element _LoginPartial renders */
+        .glass-navbar .btn-logout,
+        .glass-navbar a.btn-logout,
+        .glass-navbar form > button.btn-logout {
+            background: #F5A623 !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 10px !important;
+            padding: 7px 16px !important;
+            font-size: 0.78rem !important;
+            font-weight: 600 !important;
+            font-family: 'DM Sans', sans-serif !important;
+            letter-spacing: -0.01em;
+            transition: all 0.15s;
+            text-decoration: none;
+        }
+
+            .glass-navbar .btn-logout:hover,
+            .glass-navbar a.btn-logout:hover {
+                background: #e09510 !important;
+                transform: scale(1.02);
+            }
+
+        /* Page offset */
+        .main-container {
+            margin-top: 88px;
+        }
+
+        /* ── Chat Panel ───────────────────────────────────────── */
+        .chat-panel {
+            position: fixed;
+            top: 84px;
+            right: 24px;
+            width: 320px;
+            background: rgba(255,252,248,0.97);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0,0,0,0.07);
+            border-radius: 18px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: translateY(-8px) scale(0.97);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.22s cubic-bezier(.34,1.56,.64,1);
+            z-index: 1045;
+            max-height: calc(100vh - 110px);
+        }
+
+        @@media (max-width: 575px) {
+            .chat-panel
+
+        {
+            right: 12px;
+            width: calc(100vw - 24px);
+        }
+
+        }
+
+        .chat-panel.chat-open {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .chat-panel-header {
+            background: white;
+            border-bottom: 1px solid #F0EEE9;
+            border-top: 3px solid #F5A623;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 18px 18px 0 0;
+            flex-shrink: 0;
+        }
+
+        .chat-panel-title {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #1C1C1E;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+            .chat-panel-title i {
+                color: #F5A623;
+            }
+
+        .chat-panel-close {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: #F0EEE9;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #888;
+            transition: all 0.15s;
+        }
+
+            .chat-panel-close:hover {
+                background: #E8505B;
+                color: white;
+            }
+
+        .chat-contacts-section {
+            background: white;
+            border-bottom: 1px solid #F0EEE9;
+            padding: 12px 14px;
+            flex-shrink: 0;
+        }
+
+        .chat-contacts-label {
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #CCC;
+            margin-bottom: 8px;
+        }
+
+        #contactListArea {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            max-height: 90px;
+            overflow-y: auto;
+        }
+
+        .chat-contact-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #F5F3EF;
+            border: 1px solid #EDEBE6;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1C1C1E;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: 'DM Sans', sans-serif;
+            white-space: nowrap;
+        }
+
+            .chat-contact-btn:hover {
+                background: #F5A623;
+                border-color: #F5A623;
+                color: white;
+            }
+
+        #chatMessages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-height: 140px;
+            max-height: calc(100vh - 340px);
+        }
+
+        .chat-welcome {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #CCC;
+            background: white;
+            border: 1px solid #F0EEE9;
+            border-radius: 10px;
+            padding: 8px 14px;
+            margin: auto 0;
+        }
+
+        .bubble-me {
+            background: #F5A623;
+            color: white;
+            border-radius: 14px 14px 4px 14px;
+            padding: 8px 12px;
+            max-width: 82%;
+            font-size: 0.8rem;
+            line-height: 1.45;
+            box-shadow: 0 2px 8px rgba(245,166,35,.22);
+            align-self: flex-end;
+        }
+
+        .bubble-them {
+            background: white;
+            color: #1C1C1E;
+            border: 1px solid #F0EEE9;
+            border-radius: 14px 14px 14px 4px;
+            padding: 8px 12px;
+            max-width: 82%;
+            font-size: 0.8rem;
+            line-height: 1.45;
+            align-self: flex-start;
+        }
+
+        .chat-input-area {
+            background: white;
+            border-top: 1px solid #F0EEE9;
+            padding: 12px 14px;
+            display: flex;
+            gap: 8px;
+            border-radius: 0 0 18px 18px;
+            flex-shrink: 0;
+        }
+
+        #messageInput {
+            flex: 1;
+            background: #F5F3EF !important;
+            border: 1px solid #EDEBE6 !important;
+            border-radius: 10px !important;
+            padding: 8px 12px !important;
+            font-size: 0.8rem;
+            font-family: 'DM Sans', sans-serif;
+            color: #1C1C1E !important;
+            outline: none;
+            transition: border-color .15s;
+        }
+
+            #messageInput:focus {
+                background: white !important;
+                border-color: #F5A623 !important;
+                box-shadow: none !important;
+            }
+
+            #messageInput::placeholder {
+                color: #CCC;
+            }
+
+        #sendButton {
+            width: 34px;
+            height: 34px;
+            background: #F5A623 !important;
+            border: none !important;
+            border-radius: 10px !important;
+            cursor: pointer;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+            padding: 0 !important;
+            transition: all .15s;
+        }
+
+            #sendButton:hover {
+                background: #e09510 !important;
+                transform: scale(1.05);
+            }
+
+        #chatMessages::-webkit-scrollbar, #contactListArea::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        #chatMessages::-webkit-scrollbar-thumb, #contactListArea::-webkit-scrollbar-thumb {
+            background: #E8E4DC;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
-    <div class="offcanvas offcanvas-end shadow" tabindex="-1" id="chatOffcanvas" aria-labelledby="chatOffcanvasLabel" style="width: 350px; border-left: none;">
-        <div class="offcanvas-header text-white" style="background-color: #2B2D42;">
-            <h5 class="offcanvas-title mb-0" id="chatOffcanvasLabel"><i class="bi bi-chat-left-text me-2"></i> Messages</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+
+    <!-- ── Chat Panel ─────────────────────────────────────────── -->
+    <div class="chat-panel" id="chatPanel">
+        <div class="chat-panel-header">
+            <div class="chat-panel-title" id="chatPanelTitle">
+                <i class="bi bi-chat-dots-fill"></i> Messages
+            </div>
+            <button class="chat-panel-close" id="chatPanelClose"><i class="bi bi-x"></i></button>
         </div>
-
-        <div class="offcanvas-body d-flex flex-column p-0" style="background-color: #f8f9fa;">
-
-            <div class="p-2 border-bottom bg-light text-center">
-                <p class="small text-muted mb-1">Contacts</p>
-                <div id="contactListArea" style="max-height: 150px; overflow-y: auto;">
-                    <span class="small text-muted">Loading contacts...</span>
-                </div>
+        <div class="chat-contacts-section">
+            <p class="chat-contacts-label">Contacts</p>
+            <div id="contactListArea">
+                <span style="font-size:0.75rem;color:#CCC;">Loading...</span>
             </div>
-
-            <div id="chatMessages" class="flex-grow-1 overflow-auto p-3" style="max-height: calc(100vh - 170px);">
-                <div class="text-center text-muted small mt-2 mb-3">Welcome to Classio Chat. Click a contact above to start!</div>
-            </div>
-
-            <div class="p-3 bg-white border-top shadow-sm mt-auto">
-                <div class="input-group">
-                    <input type="text" id="messageInput" class="form-control rounded-start-pill" placeholder="Type a message..." autocomplete="off">
-                    <button class="btn btn-primary rounded-end-pill" type="button" id="sendButton" style="background-color: #0077B6; border: none;">
-                        <i class="bi bi-send-fill"></i>
-                    </button>
-                </div>
-            </div>
+        </div>
+        <div id="chatMessages">
+            <div class="chat-welcome">Select a contact above to start chatting.</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off" />
+            <button id="sendButton" type="button"><i class="bi bi-send-fill"></i></button>
         </div>
     </div>
 
+    <!-- ── Navbar ─────────────────────────────────────────────── -->
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm glass-navbar fixed-top">
-            <div class="container-fluid">
+        <nav class="navbar navbar-expand-sm glass-navbar">
+            <div class="container-fluid px-0">
+
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Classio</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+
+                <!-- Hamburger with explicit BI icon (no navbar-light/dark dependency) -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#mainNavCollapse" aria-controls="mainNavCollapse"
                         aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+                    <i class="bi bi-list"></i>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">About</a>
-                        </li>
-                    </ul>
-                    <button class="btn btn-light position-relative rounded-circle shadow-sm me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#chatOffcanvas" style="width: 40px; height: 40px;">
-                        <i class="bi bi-chat-dots" style="color: #2B2D42;"></i>
-                    </button>
-                    <partial name="_LoginPartial" />
+
+                <div class="collapse navbar-collapse" id="mainNavCollapse">
+
+                    <!-- Centered links (absolute on desktop, stacked on mobile) -->
+                    <div class="nav-center">
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">About</a>
+                    </div>
+
+                    <!-- Right: chat + login partial -->
+                    <div class="nav-right">
+                        <span class="nav-email">
+                            @* Replace with your actual user email expression, e.g.: *@
+                            @* User.Identity?.Name *@
+                        </span>
+                        <button class="chat-icon-btn" id="chatToggleBtn" type="button" title="Messages">
+                            <i class="bi bi-chat-dots-fill"></i>
+                        </button>
+                        <partial name="_LoginPartial" />
+                    </div>
+
                 </div>
             </div>
         </nav>
     </header>
 
-    <div class="container" style="margin-top: 80px;">
+    <div class="container main-container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
@@ -84,6 +568,25 @@
 
         let currentContactId = null;
 
+        // ── Chat panel toggle ──────────────────────────────────
+        const chatPanel = document.getElementById('chatPanel');
+
+        document.getElementById('chatToggleBtn').addEventListener('click', function (e) {
+            e.stopPropagation();
+            chatPanel.classList.toggle('chat-open');
+        });
+
+        document.getElementById('chatPanelClose').addEventListener('click', function () {
+            chatPanel.classList.remove('chat-open');
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!chatPanel.contains(e.target) && !document.getElementById('chatToggleBtn').contains(e.target)) {
+                chatPanel.classList.remove('chat-open');
+            }
+        });
+
+        // ── SignalR ────────────────────────────────────────────
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/chatHub")
             .build();
@@ -92,7 +595,6 @@
 
         connection.start().then(function () {
             document.getElementById("sendButton").disabled = false;
-            console.log("SignalR Connected.");
         }).catch(function (err) {
             console.error("SignalR Connection Error: ", err.toString());
         });
@@ -101,119 +603,86 @@
             if (currentContactId === senderId) {
                 appendMessageBubble(message, false);
                 scrollToBottom();
-            } else {
-                console.log("New message from " + senderId);
             }
         });
 
         document.getElementById("sendButton").addEventListener("click", function (event) {
             event.preventDefault();
-
             const messageInput = document.getElementById("messageInput");
             const message = messageInput.value.trim();
-
             if (message === "" || currentContactId === null) {
                 if (currentContactId === null) alert("Please select a contact to chat with first!");
                 return;
             }
-
-            connection.invoke("SendPrivateMessage", currentContactId, message).catch(function (err) {
-                console.error(err.toString());
-            });
-
+            connection.invoke("SendPrivateMessage", currentContactId, message)
+                .catch(err => console.error(err.toString()));
             appendMessageBubble(message, true);
             messageInput.value = "";
             scrollToBottom();
         });
 
         document.getElementById("messageInput").addEventListener("keypress", function (e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                document.getElementById("sendButton").click();
-            }
+            if (e.key === 'Enter') { e.preventDefault(); document.getElementById("sendButton").click(); }
         });
 
-        window.openChat = function(contactId, contactName) {
+        window.openChat = function (contactId, contactName) {
             currentContactId = contactId;
-            document.getElementById("chatOffcanvasLabel").innerHTML = `<i class="bi bi-chat-left-text me-2"></i> Chat with ${contactName}`;
+            document.getElementById("chatPanelTitle").innerHTML =
+                `<i class="bi bi-chat-left-text" style="color:#F5A623"></i> ${contactName}`;
 
             const chatBox = document.getElementById("chatMessages");
-            chatBox.innerHTML = '<div class="text-center text-muted small mt-2 mb-3">Loading history...</div>';
+            chatBox.innerHTML = '<div class="chat-welcome">Loading history...</div>';
 
             fetch(`/Chat/GetChatHistory?contactId=${contactId}`)
-                .then(response => {
-                    if (!response.ok) throw new Error("Failed to load history");
-                    return response.json();
-                })
+                .then(r => { if (!r.ok) throw new Error("Failed"); return r.json(); })
                 .then(messages => {
                     chatBox.innerHTML = '';
-                    if(messages.length === 0) {
-                        chatBox.innerHTML = '<div class="text-center text-muted small mt-2 mb-3">No past messages. Start the conversation!</div>';
+                    if (messages.length === 0) {
+                        chatBox.innerHTML = '<div class="chat-welcome">No past messages. Start the conversation!</div>';
                     } else {
-                        messages.forEach(msg => {
-                            appendMessageBubble(msg.content, msg.isMine);
-                        });
+                        messages.forEach(msg => appendMessageBubble(msg.content, msg.isMine));
                     }
                     scrollToBottom();
                 })
-                .catch(error => {
-                    console.error("Error loading history:", error);
-                    chatBox.innerHTML = '<div class="text-center text-danger small mt-2 mb-3">Failed to load messages. Are you logged in?</div>';
+                .catch(() => {
+                    chatBox.innerHTML = '<div class="chat-welcome" style="color:#E8505B;">Failed to load messages.</div>';
                 });
         };
 
         function appendMessageBubble(messageText, isMine) {
             const chatBox = document.getElementById("chatMessages");
-            const msgDiv = document.createElement("div");
-
-            msgDiv.className = `d-flex align-items-start mb-3 ${isMine ? 'justify-content-end' : ''}`;
-
-            if (isMine) {
-                msgDiv.innerHTML = `
-                    <div class="p-3 shadow-sm text-white" style="background: #0077B6; border-radius: 15px 0px 15px 15px; max-width: 85%; word-wrap: break-word;">
-                        <p class="mb-0">${messageText}</p>
-                    </div>
-                `;
-            } else {
-                msgDiv.innerHTML = `
-                    <div class="p-3 shadow-sm" style="background: white; border-radius: 0px 15px 15px 15px; max-width: 85%; word-wrap: break-word;">
-                        <p class="mb-0 text-dark">${messageText}</p>
-                    </div>
-                `;
-            }
-
-            chatBox.appendChild(msgDiv);
+            const bubble = document.createElement("div");
+            bubble.className = isMine ? "bubble-me" : "bubble-them";
+            bubble.textContent = messageText;
+            chatBox.appendChild(bubble);
         }
 
         function scrollToBottom() {
             const chatBox = document.getElementById("chatMessages");
             chatBox.scrollTop = chatBox.scrollHeight;
         }
-            function loadContacts() {
-                fetch('/Chat/GetContacts')
-                    .then(response => response.json())
-                    .then(users => {
-                        const contactArea = document.getElementById("contactListArea");
-                        contactArea.innerHTML = ''; 
 
-                        if(users.length === 0) {
-                            contactArea.innerHTML = '<span class="small text-muted">No other users found.</span>';
-                            return;
-                        }
+        function loadContacts() {
+            fetch('/Chat/GetContacts')
+                .then(r => r.json())
+                .then(users => {
+                    const area = document.getElementById("contactListArea");
+                    area.innerHTML = '';
+                    if (users.length === 0) {
+                        area.innerHTML = '<span style="font-size:0.75rem;color:#CCC;">No other users found.</span>';
+                        return;
+                    }
+                    users.forEach(u => {
+                        area.innerHTML +=
+                            `<button class="chat-contact-btn" onclick="openChat('${u.id}', '${u.name}')">
+                                <i class="bi bi-person-fill"></i> ${u.name}
+                            </button>`;
+                    });
+                })
+                .catch(err => console.error("Could not load contacts", err));
+        }
 
-                        users.forEach(u => {
-                            contactArea.innerHTML += `
-                                <button class="btn btn-sm btn-outline-primary w-100 mb-2" onclick="openChat('${u.id}', '${u.name}')">
-                                    <i class="bi bi-person-fill"></i> ${u.name}
-                                </button>
-                            `;
-                        });
-                    })
-                    .catch(err => console.error("Could not load contacts", err));
-            }
-            document.addEventListener("DOMContentLoaded", function() {
-                loadContacts();
-            });
+        document.addEventListener("DOMContentLoaded", loadContacts);
     </script>
 </body>
 </html>

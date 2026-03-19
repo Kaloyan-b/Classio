@@ -125,6 +125,21 @@ public class Program
             pattern: "{controller=Home}/{action=Index}/{id?}");
         app.MapRazorPages();
 
+        //DbSeed
+        using (var scope = app.Services.CreateScope())
+        {
+            var services = scope.ServiceProvider;
+            try
+            {
+                var context = services.GetRequiredService<Classio.Data.ClassioDbContext>();
+                Classio.Data.DbInitializer.Initialize(context);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An error occurred while seeding the database: " + ex.Message);
+            }
+        }
+
         app.Run();
     }
 }

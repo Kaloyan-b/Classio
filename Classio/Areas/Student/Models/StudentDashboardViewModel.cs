@@ -53,6 +53,7 @@ namespace Classio.Areas.Student.Models
     {
         public double TotalWeightedAbsences { get; set; }
         public List<AbsenceDetail> Absences { get; set; } = new();
+
     }
 
     public class AbsenceDetail

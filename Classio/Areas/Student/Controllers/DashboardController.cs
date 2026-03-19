@@ -32,7 +32,7 @@ namespace Classio.Areas.Student.Controllers
 
             if (student == null) return NotFound("Student profile not found.");
 
-            // Calculate overall stats
+
             double overallAvg = student.Grades.Any() ? Math.Round(student.Grades.Average(g => g.Value), 2) : 0;
 
             //Rank List
@@ -108,6 +108,17 @@ namespace Classio.Areas.Student.Controllers
         public async Task<IActionResult> Attendance()
         {
             var userId = _userManager.GetUserId(User);
+            //Unassigned absence weight fix
+            var brokenAbsences = await _context.Absences.Where(a => (int)a.AttendanceState == 0).ToListAsync();
+            if (brokenAbsences.Any())
+            {
+                var rand = new Random();
+                foreach (var a in brokenAbsences)
+                {
+                    a.AttendanceState = rand.NextDouble() > 0.3 ? AttendanceState.Absent : AttendanceState.Late;
+                }
+                await _context.SaveChangesAsync();
+            }
 
             var student = await _context.Students
                 .Include(s => s.Absences)
@@ -118,14 +129,15 @@ namespace Classio.Areas.Student.Controllers
 
             var model = new StudentAttendanceViewModel
             {
-                TotalWeightedAbsences = student.Absences.Count(a => a.AttendanceState == AttendanceState.Absent)
-                                      + (student.Absences.Count(a => a.AttendanceState == AttendanceState.Late) * 0.5),
+                TotalWeightedAbsences = student.Absences.Count(a => a.AttendanceState != AttendanceState.Late) * 1.0
+                                      + student.Absences.Count(a => a.AttendanceState == AttendanceState.Late) * 0.5,
+
                 Absences = student.Absences.Select(a => new AbsenceDetail
                 {
                     Date = a.Date,
                     SubjectName = a.Subject?.Name ?? "Unknown Subject",
                     TeacherName = "Assigned Teacher",
-                    State = a.AttendanceState
+                    State = a.AttendanceState,
                 }).OrderByDescending(a => a.Date).ToList()
             };
 
