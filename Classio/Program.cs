@@ -46,56 +46,6 @@ public class Program
 
         app.MapHub<Classio.Hubs.ChatHub>("/chatHub");
 
-        // --- Role  Seeding ---
-        using (var scope = app.Services.CreateScope())
-        {
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-
-            string[] roles = { "Admin", "Student", "Parent", "Teacher" };
-
-            foreach (var role in roles)
-            {
-                if (!roleManager.RoleExistsAsync(role).GetAwaiter().GetResult())
-                {
-                    roleManager.CreateAsync(new IdentityRole(role)).GetAwaiter().GetResult();
-                }
-            }
-
-            // default admin
-            string adminEmail = "admin@classio.com";
-            string adminPassword = "Admin123!";
-
-            var adminUser = userManager.FindByEmailAsync(adminEmail).GetAwaiter().GetResult();
-
-            if (adminUser == null)
-            {
-                adminUser = new User
-                {
-                    UserName = adminEmail,
-                    Email = adminEmail,
-                    FirstName = "System",
-                    LastName = "Admin",
-                    EmailConfirmed = true
-                };
-
-                var result = userManager.CreateAsync(adminUser, adminPassword).GetAwaiter().GetResult();
-
-                if (result.Succeeded)
-                {
-                    userManager.AddToRoleAsync(adminUser, "Admin").GetAwaiter().GetResult();
-                }
-                else
-                {
-                    throw new Exception(
-                        "Admin seeding failed: " +
-                        string.Join(", ", result.Errors.Select(e => e.Description))
-                    );
-                }
-            }
-        }
-
-
         // --- Pipeline ---
         if (app.Environment.IsDevelopment())
         {
@@ -128,16 +78,10 @@ public class Program
         //DbSeed
         using (var scope = app.Services.CreateScope())
         {
-            var services = scope.ServiceProvider;
-            try
-            {
-                var context = services.GetRequiredService<Classio.Data.ClassioDbContext>();
-                Classio.Data.DbInitializer.Initialize(context);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("An error occurred while seeding the database: " + ex.Message);
-            }
+            var context = scope.ServiceProvider.GetRequiredService<Classio.Data.ClassioDbContext>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            Classio.Data.DbInitializer.Initialize(context, userManager, roleManager);
         }
 
         app.Run();
