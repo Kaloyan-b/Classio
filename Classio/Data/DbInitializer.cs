@@ -20,8 +20,8 @@ namespace Classio.Data
             EnsureUser(userManager, "admin@classio.com", "Admin123!", "System", "Admin", "Admin");
 
             // Already seeded — skip the rest
-            if (context.Teachers.Any()) return;
-
+            if (!context.Teachers.Any())
+            {
             var rand = new Random(42);
 
             // ── School ────────────────────────────────────────────────────────────
@@ -161,6 +161,82 @@ namespace Classio.Data
             }
             context.Absences.AddRange(absences);
             context.SaveChanges();
+            }
+
+            // ── Class Periods (independent check) ───────────────────────────────
+            if (!context.ClassPeriods.Any())
+            {
+                var start = new TimeSpan(8, 30, 0);
+                var lessonLength = TimeSpan.FromMinutes(40);
+                var shortBreak = TimeSpan.FromMinutes(10);
+                var longBreak = TimeSpan.FromMinutes(30);
+                int order = 1;
+                int lessonNum = 0;
+
+                var periods = new List<ClassPeriod>();
+                for (int i = 0; i < 8; i++)
+                {
+                    if (i > 0)
+                    {
+                        var breakDuration = (i == 5) ? longBreak : shortBreak;
+                        var breakPeriod = new ClassPeriod
+                        {
+                            Name = (i == 5) ? "Long Break" : "Break",
+                            StartTime = start,
+                            EndTime = start + breakDuration,
+                            IsBreak = true,
+                            Order = order++
+                        };
+                        periods.Add(breakPeriod);
+                        start += breakDuration;
+                    }
+
+                    lessonNum++;
+                    var lesson = new ClassPeriod
+                    {
+                        Name = $"Period {lessonNum}",
+                        StartTime = start,
+                        EndTime = start + lessonLength,
+                        IsBreak = false,
+                        Order = order++
+                    };
+                    periods.Add(lesson);
+                    start += lessonLength;
+                }
+                context.ClassPeriods.AddRange(periods);
+                context.SaveChanges();
+
+                // ── Schedule Slots (Mon–Fri for each class) ─────────────────
+                var lessonPeriods = periods.Where(p => !p.IsBreak).ToList();
+                var allClasses = context.Classes.ToList();
+                var allTeachers = context.Teachers.ToList();
+                var weekdays = new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday };
+
+                if (allTeachers.Any())
+                {
+                    var slots = new List<ScheduleSlot>();
+                    foreach (var cls in allClasses)
+                    {
+                        foreach (var day in weekdays)
+                        {
+                            for (int i = 0; i < lessonPeriods.Count; i++)
+                            {
+                                var teacher = allTeachers[(i + (int)day) % allTeachers.Count];
+                                slots.Add(new ScheduleSlot
+                                {
+                                    DayOfWeek = day,
+                                    ClassId = cls.Id,
+                                    ClassPeriodId = lessonPeriods[i].Id,
+                                    SubjectId = teacher.SubjectId,
+                                    TeacherId = teacher.Id
+                                });
+                            }
+                        }
+                    }
+                    context.ScheduleSlots.AddRange(slots);
+                    context.SaveChanges();
+                }
+            }
         }
 
         private static User EnsureUser(UserManager<User> userManager, string email, string password, string firstName, string lastName, string role)

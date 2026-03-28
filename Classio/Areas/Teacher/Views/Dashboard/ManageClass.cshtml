@@ -1,0 +1,109 @@
+@model Classio.Areas.Teacher.Models.ManageClassViewModel
+
+@{
+    ViewData["Title"] = "Homeroom - " + Model.ClassName;
+}
+
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-0"><i class="bi bi-star-fill text-primary me-2"></i>@Model.ClassName</h2>
+            <span class="text-muted">@Model.SchoolName &bull; Homeroom Overview</span>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h3 class="fw-bold text-primary">@Model.Students.Count</h3>
+                    <small class="text-muted">Students</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    @{
+                        var classAvg = Model.Students.Where(s => s.OverallAverage > 0).Select(s => s.OverallAverage);
+                    }
+                    <h3 class="fw-bold text-success">@(classAvg.Any() ? classAvg.Average().ToString("0.00") : "-")</h3>
+                    <small class="text-muted">Class Average</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h3 class="fw-bold text-info">@Model.Students.Sum(s => s.TotalGrades)</h3>
+                    <small class="text-muted">Total Grades</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h3 class="fw-bold text-danger">@Model.Students.Sum(s => s.WeightedAbsences).ToString("0.0")</h3>
+                    <small class="text-muted">Total Absences</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white py-3">
+            <h6 class="m-0 fw-bold"><i class="bi bi-people-fill me-2"></i>Students</h6>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Student</th>
+                        <th class="text-center">Average</th>
+                        <th class="text-center">Total Grades</th>
+                        <th class="text-center">Absences (Weighted)</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in Model.Students)
+                    {
+                        var avgClass = s.OverallAverage >= 5 ? "text-success" : s.OverallAverage >= 3.5 ? "text-primary" : s.OverallAverage > 0 ? "text-danger" : "text-muted";
+                        <tr>
+                            <td class="ps-4 fw-bold">@s.StudentName</td>
+                            <td class="text-center">
+                                <span class="fw-bold fs-5 @avgClass">@(s.OverallAverage > 0 ? s.OverallAverage.ToString("0.00") : "-")</span>
+                            </td>
+                            <td class="text-center">@s.TotalGrades</td>
+                            <td class="text-center">
+                                @if (s.WeightedAbsences > 0)
+                                {
+                                    <span class="badge bg-danger">@s.WeightedAbsences.ToString("0.0")</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">0</span>
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                <a asp-action="ManageStudent" asp-route-classId="@Model.ClassId" asp-route-studentId="@s.StudentId"
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-pencil-square"></i> View / Edit
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
