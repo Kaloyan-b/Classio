@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Classio.Models.Student>
+@model IEnumerable<Classio.Models.Student>
 
 @{
     ViewData["Title"] = "Manage Students";
@@ -7,10 +7,10 @@
 <div class="py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="fw-bold mb-0" style="color: #1D3557;">Manage Students</h2>
+            <h2 class="fw-bold mb-0" style="color: #E76F51;">Manage Students</h2>
             <p class="text-muted">View, add, and manage student records and class assignments.</p>
         </div>
-        @* <button type="button" class="btn fw-bold px-4 py-2 shadow-sm" style="background-color: #457B9D; color: white; border-radius: 8px;" data-bs-toggle="modal" data-bs-target="#studentModal"
+        @* <button type="button" class="btn fw-bold px-4 py-2 shadow-sm" style="background-color: #F4A261; color: white; border-radius: 8px;" data-bs-toggle="modal" data-bs-target="#studentModal"
                 onclick="loadModal('@Url.Action("Create", "Students", new { area = "Admin" })', 'studentModalContent')">
             <i class="bi bi-person-plus-fill me-1"></i> Add Student
         </button> *@
@@ -19,14 +19,14 @@
     <div class="glass-card-light border-0 shadow-sm overflow-hidden">
         <div class="table-responsive">
             <table class="table table-hover mb-0 align-middle" style="background: transparent;">
-                <thead style="background: rgba(29, 53, 87, 0.05);">
+                <thead style="background: rgba(231, 111, 81, 0.05);">
                     <tr>
-                        <th class="py-3 px-4 fw-bold" style="color: #1D3557;">Name</th>
-                        <th class="py-3 px-4 fw-bold" style="color: #1D3557;">Email</th>
-                        <th class="py-3 px-4 fw-bold" style="color: #1D3557;">Class</th>
-                        <th class="py-3 px-4 fw-bold" style="color: #1D3557;">Parents</th>
-                        <th class="py-3 px-4 fw-bold" style="color: #1D3557;">School</th>
-                        <th class="py-3 px-4 fw-bold text-end" style="color: #1D3557;">Actions</th>
+                        <th class="py-3 px-4 fw-bold" style="color: #264653;">Name</th>
+                        <th class="py-3 px-4 fw-bold" style="color: #264653;">Email</th>
+                        <th class="py-3 px-4 fw-bold" style="color: #264653;">Class</th>
+                        <th class="py-3 px-4 fw-bold" style="color: #264653;">Parents</th>
+                        <th class="py-3 px-4 fw-bold" style="color: #264653;">School</th>
+                        <th class="py-3 px-4 fw-bold text-end" style="color: #264653;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,7 +45,7 @@
                             <tr style="border-bottom: 1px solid rgba(0,0,0,0.05);">
                                 <td class="py-3 px-4">
                                     <div class="d-flex align-items-center">
-                                        <div class="bg-white rounded-circle d-flex justify-content-center align-items-center shadow-sm me-3 fw-bold" style="width: 40px; height: 40px; border: 2px solid #457B9D; color: #1D3557; font-size: 0.9rem;">
+                                        <div class="bg-white rounded-circle d-flex justify-content-center align-items-center shadow-sm me-3 fw-bold" style="width: 40px; height: 40px; border: 2px solid #F4A261; color: #E76F51; font-size: 0.9rem;">
                                             @item.FirstName.Substring(0, 1)@item.LastName.Substring(0, 1)
                                         </div>
                                         <span class="fw-bold" style="color: #333;">@item.FirstName @item.LastName</span>
@@ -68,7 +68,7 @@
                                 <td class="py-3 px-4">
                                     @if (item.Class != null)
                                     {
-                                        <span class="badge rounded-pill" style="background-color: #457B9D; font-size: 0.85rem;">@item.Class.Name</span>
+                                        <span class="badge rounded-pill" style="background-color: #E76F51; font-size: 0.85rem;">@item.Class.Name</span>
                                     }
                                     else
                                     {
@@ -79,11 +79,11 @@
                                 <td class="py-3 px-4 small text-muted">
                                     @if (item.Parent1 != null && item.Parent1.User != null)
                                     {
-                                        <div class="mb-1"><i class="bi bi-person-heart me-1" style="color: #1D3557;"></i> @item.Parent1.FirstName @item.Parent1.User.LastName</div>
+                                        <div class="mb-1"><i class="bi bi-person-heart me-1" style="color: #F4A261;"></i> @item.Parent1.FirstName @item.Parent1.User.LastName</div>
                                     }
                                     @if (item.Parent2 != null && item.Parent2.User != null)
                                     {
-                                        <div><i class="bi bi-person-heart me-1" style="color: #1D3557;"></i> @item.Parent2.User.FirstName @item.Parent2.User.LastName</div>
+                                        <div><i class="bi bi-person-heart me-1" style="color: #F4A261;"></i> @item.Parent2.User.FirstName @item.Parent2.User.LastName</div>
                                     }
                                     @if (item.Parent1 == null && item.Parent2 == null)
                                     {
@@ -99,7 +99,7 @@
                                     <div class="btn-group shadow-sm">
                                         <button type="button" class="btn btn-sm btn-light border-0 fw-bold" data-bs-toggle="modal" data-bs-target="#studentModal"
                                                 onclick="loadModal('@Url.Action("Edit", "Students", new { area = "Admin", id = item.Id })', 'studentModalContent')" title="Edit Student">
-                                            <i class="bi bi-pencil-square me-1" style="color: #457B9D;"></i>
+                                            <i class="bi bi-pencil-square me-1" style="color: #E76F51;"></i>
                                         </button>
 
                                         <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-light border-0 fw-bold"
@@ -121,7 +121,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content" id="studentModalContent">
             <div class="modal-body text-center py-5">
-                <div class="spinner-border text-primary" role="status">
+                <div class="spinner-border" role="status" style="color: #E76F51;">
                     <span class="visually-hidden">Loading...</span>
                 </div>
             </div>
@@ -131,10 +131,8 @@
 
 @section Scripts {
     <script>
-        // load partial views into the modal
         function loadModal(url, targetId) {
-            // loading spinner before request finishes
-            $('#' + targetId).html('<div class="modal-body text-center py-4"><div class="spinner-border text-primary"></div></div>');
+            $('#' + targetId).html('<div class="modal-body text-center py-4"><div class="spinner-border" style="color: #E76F51;"></div></div>');
 
             $.get(url, function (data) {
                 $('#' + targetId).html(data);

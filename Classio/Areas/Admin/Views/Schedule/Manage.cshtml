@@ -1,96 +1,111 @@
-﻿@model List<Classio.Models.ScheduleSlot>
+@model List<Classio.Models.ScheduleSlot>
 @{
+    ViewData["Title"] = "Schedule: " + ViewBag.ClassName;
     var days = new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday };
 }
 
-<div class="container-fluid mt-3">
-    <div class="row">
-        <div class="col-md-2 bg-light p-3 border-end vh-100">
-            <h5>Subjects</h5>
-            <small class="text-muted d-block mb-3">Drag to schedule. Click assigned class to change teacher.</small>
+<div class="py-4">
+    <div class="d-flex align-items-center mb-4">
+        <a asp-action="Index" class="btn btn-outline-custom rounded-circle me-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;">
+            <i class="bi bi-arrow-left fs-5"></i>
+        </a>
+        <div>
+            <h2 class="fw-bold mb-0" style="color: #E76F51;">Schedule: @ViewBag.ClassName</h2>
+            <p class="text-muted mb-0">Drag subjects from the sidebar to assign them. Click a slot to change its teacher.</p>
+        </div>
+    </div>
 
-            <div id="subject-pool">
-                @foreach (var subject in ViewBag.Subjects)
-                {
-                    <div class="card mb-2 p-2 shadow-sm draggable-subject"
-                         draggable="true"
-                         data-id="@subject.Id"
-                         style="cursor: grab; border-left: 4px solid #0d6efd;">
-                        @subject.Name
-                    </div>
-                }
+    <div class="row g-0">
+        <!-- Subject sidebar -->
+        <div class="col-md-2">
+            <div class="glass-card-light border-0 shadow-sm p-3 h-100">
+                <h6 class="fw-bold mb-3" style="color: #264653;"><i class="bi bi-book-half me-1"></i> Subjects</h6>
+                <div id="subject-pool">
+                    @foreach (var subject in ViewBag.Subjects)
+                    {
+                        <div class="card mb-2 p-2 shadow-sm draggable-subject"
+                             draggable="true"
+                             data-id="@subject.Id"
+                             style="cursor: grab; border-left: 4px solid #E76F51; border-radius: 6px; font-size: 0.9rem;">
+                            @subject.Name
+                        </div>
+                    }
+                </div>
             </div>
         </div>
 
-        <div class="col-md-10 p-3">
-            <h2>Schedule: @ViewBag.ClassName</h2>
-            <table class="table table-bordered text-center align-middle">
-                <thead class="table-dark">
-                    <tr>
-                        <th style="width:100px;">Time</th>
-                        @foreach (var day in days)
+        <!-- Schedule grid -->
+        <div class="col-md-10 ps-3">
+            <div class="glass-card-light border-0 shadow-sm overflow-hidden">
+                <table class="table table-bordered text-center align-middle mb-0" style="background: transparent;">
+                    <thead style="background: rgba(231, 111, 81, 0.1);">
+                        <tr>
+                            <th class="py-3 fw-bold" style="color: #264653; width: 100px;">Time</th>
+                            @foreach (var day in days)
+                            {
+                                <th class="py-3 fw-bold" style="color: #264653;">@day</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var period in ViewBag.Periods)
                         {
-                            <th>@day</th>
-                        }
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var period in ViewBag.Periods)
-                    {
-                        if (period.IsBreak)
-                        {
-                            <tr class="table-secondary">
-                                <td class="fw-bold">@period.Name</td>
-                                <td colspan="5" class="small text-muted">@period.StartTime - @period.EndTime</td>
-                            </tr>
-                        }
-                        else
-                        {
-                            <tr>
-                                <td class="bg-light fw-bold">
-                                    <div class="small">@period.Name</div>
-                                    @period.StartTime.ToString(@"hh\:mm")
-                                </td>
-                                @foreach (var day in days)
-                                {
-                                    var slot = Model.FirstOrDefault(s => s.ClassPeriodId == period.Id && s.DayOfWeek == day);
-
-                                    <td class="drop-zone position-relative"
-                                        data-period-id="@period.Id"
-                                        data-day="@((int)day)"
-                                        ondrop="drop(event)"
-                                        ondragover="allowDrop(event)"
-                                        style="height: 80px; vertical-align: top;">
-
-                                        @if (slot != null)
-                                        {
-                                            <div class="badge bg-primary w-100 p-2 mt-1 shadow-sm text-wrap"
-                                                 style="cursor: pointer;"
-                                                 onclick="openEditModal(@slot.SubjectId, @period.Id, @((int)day))">
-
-                                                <div class="fs-6">@slot.Subject.Name</div>
-                                                <div class="fw-light small">
-                                                    <i class="bi bi-person"></i> @slot.Teacher?.LastName
-                                                    <i class="bi bi-pencil-square ms-1"></i>
-                                                </div>
-                                            </div>
-                                        }
+                            if (period.IsBreak)
+                            {
+                                <tr style="background: rgba(244, 162, 97, 0.08);">
+                                    <td class="fw-bold small" style="color: #E76F51;">@period.Name</td>
+                                    <td colspan="5" class="small text-muted">@period.StartTime - @period.EndTime</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td class="fw-bold" style="background: rgba(231, 111, 81, 0.04);">
+                                        <div class="small" style="color: #264653;">@period.Name</div>
+                                        <span class="small text-muted">@period.StartTime.ToString(@"hh\:mm")</span>
                                     </td>
-                                }
-                            </tr>
+                                    @foreach (var day in days)
+                                    {
+                                        var slot = Model.FirstOrDefault(s => s.ClassPeriodId == period.Id && s.DayOfWeek == day);
+
+                                        <td class="drop-zone position-relative"
+                                            data-period-id="@period.Id"
+                                            data-day="@((int)day)"
+                                            ondrop="drop(event)"
+                                            ondragover="allowDrop(event)"
+                                            style="height: 80px; vertical-align: top;">
+
+                                            @if (slot != null)
+                                            {
+                                                <div class="badge w-100 p-2 mt-1 shadow-sm text-wrap"
+                                                     style="cursor: pointer; background-color: #E76F51;"
+                                                     onclick="openEditModal(@slot.SubjectId, @period.Id, @((int)day))">
+
+                                                    <div class="fs-6">@slot.Subject.Name</div>
+                                                    <div class="fw-light small">
+                                                        <i class="bi bi-person"></i> @slot.Teacher?.LastName
+                                                        <i class="bi bi-pencil-square ms-1"></i>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </td>
+                                    }
+                                </tr>
+                            }
                         }
-                    }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
+<!-- Teacher selection modal -->
 <div class="modal fade" id="teacherModal" tabindex="-1">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Change Teacher</h5>
+            <div class="modal-header" style="background: rgba(231, 111, 81, 0.05);">
+                <h5 class="modal-title fw-bold" style="color: #264653;">Change Teacher</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -98,31 +113,28 @@
                 <input type="hidden" id="editPeriodId">
                 <input type="hidden" id="editDay">
 
-                <label class="form-label">Select Teacher:</label>
+                <label class="form-label fw-bold" style="color: #264653;">Select Teacher:</label>
                 <select id="teacherSelect" class="form-select mb-3"></select>
 
-                <button class="btn btn-success w-100" onclick="saveManualAssignment()">Save Change</button>
+                <button class="btn w-100 fw-bold text-white" style="background-color: #E76F51; border-radius: 8px;" onclick="saveManualAssignment()">Save Change</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // 1. DRAG START
     document.querySelectorAll('.draggable-subject').forEach(item => {
         item.addEventListener('dragstart', ev => {
             ev.dataTransfer.setData("subjectId", ev.target.dataset.id);
         });
     });
 
-    // 2. ALLOW DROP
     function allowDrop(ev) {
         ev.preventDefault();
         const cell = ev.target.closest('td');
-        if(cell) cell.style.backgroundColor = "#e9ecef";
+        if(cell) cell.style.backgroundColor = "rgba(244, 162, 97, 0.15)";
     }
 
-    // 3. HANDLE DROP (Auto-Assign Default Teacher)
     function drop(ev) {
         ev.preventDefault();
         const cell = ev.target.closest('td');
@@ -132,22 +144,17 @@
         const periodId = cell.getAttribute('data-period-id');
         const day = cell.getAttribute('data-day');
 
-        // teacherId = 0 means "Auto-Detect Default Teacher"
         performSave(periodId, day, subjectId, 0);
     }
 
-    // 4. OPEN MODAL (Manual Assign)
     function openEditModal(subjectId, periodId, day) {
-        // Set hidden inputs
         document.getElementById('editSubjectId').value = subjectId;
         document.getElementById('editPeriodId').value = periodId;
         document.getElementById('editDay').value = day;
 
-        // Show Modal
         const modal = new bootstrap.Modal(document.getElementById('teacherModal'));
         modal.show();
 
-        // Load Teachers
         const select = document.getElementById('teacherSelect');
         select.innerHTML = "<option>Loading...</option>";
         select.disabled = true;
@@ -166,7 +173,6 @@
             });
     }
 
-    // 5. SAVE MANUAL ASSIGNMENT
     function saveManualAssignment() {
         const subjectId = document.getElementById('editSubjectId').value;
         const periodId = document.getElementById('editPeriodId').value;
@@ -176,7 +182,6 @@
         performSave(periodId, day, subjectId, teacherId);
     }
 
-    // 6. SHARED SAVE FUNCTION
     function performSave(periodId, day, subjectId, teacherId) {
         const payload = {
             ClassId: @ViewBag.ClassId,

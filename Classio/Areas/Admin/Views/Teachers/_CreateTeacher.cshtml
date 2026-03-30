@@ -1,38 +1,50 @@
-﻿@model Classio.Areas.Admin.Models.CreateTeacherViewModel
+@model Classio.Areas.Admin.Models.CreateTeacherViewModel
 
 <form asp-area="Admin" asp-controller="Teachers" asp-action="Create" method="post">
-    <div class="modal-header">
-        <h5 class="modal-title">Add New Teacher</h5>
+    <div class="modal-header" style="background: rgba(231, 111, 81, 0.05); border-bottom: 1px solid rgba(231, 111, 81, 0.15);">
+        <h5 class="modal-title fw-bold" style="color: #E76F51;"><i class="bi bi-person-plus-fill me-2"></i>Add New Teacher</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
-    <div class="modal-body">
-        <div class="mb-3">
-            <label asp-for="FirstName"></label>
-            <input asp-for="FirstName" class="form-control" />
+
+    <div class="modal-body p-4">
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <label asp-for="FirstName" class="form-label fw-bold" style="color: #264653;">First Name</label>
+                <input asp-for="FirstName" class="form-control" />
+            </div>
+            <div class="col-md-6">
+                <label asp-for="LastName" class="form-label fw-bold" style="color: #264653;">Last Name</label>
+                <input asp-for="LastName" class="form-control" />
+            </div>
         </div>
+
         <div class="mb-3">
-            <label asp-for="LastName"></label>
-            <input asp-for="LastName" class="form-control" />
-        </div>
-        <div class="mb-3">
-            <label asp-for="Email"></label>
+            <label asp-for="Email" class="form-label fw-bold" style="color: #264653;">Email</label>
             <input asp-for="Email" class="form-control" />
         </div>
-        <div class="mb-3">
-            <label asp-for="Password"></label>
+
+        <div class="mb-4">
+            <label asp-for="Password" class="form-label fw-bold" style="color: #264653;">Password</label>
             <input asp-for="Password" class="form-control" />
         </div>
-        <div class="mb-3">
-            <label asp-for="SubjectId"></label>
-            <select asp-for="SubjectId" class="form-control" asp-items="ViewBag.SubjectId"></select>
-        </div>
-        <div class="mb-3">
-            <label asp-for="SchoolId"></label>
-            <select asp-for="SchoolId" class="form-control" asp-items="ViewBag.SchoolId"></select>
+
+        <div class="p-3 rounded" style="background: rgba(244, 162, 97, 0.08); border: 1px solid rgba(244, 162, 97, 0.25);">
+            <label class="form-label fw-bold" style="color: #E76F51;"><i class="bi bi-book-half me-1"></i> Subject & School</label>
+
+            <div class="mb-3">
+                <label asp-for="SubjectId" class="form-label small fw-bold" style="color: #264653;">Subject</label>
+                <select asp-for="SubjectId" class="form-select" asp-items="ViewBag.SubjectId"></select>
+            </div>
+
+            <div>
+                <label asp-for="SchoolId" class="form-label small fw-bold" style="color: #264653;">School</label>
+                <select asp-for="SchoolId" class="form-select" asp-items="ViewBag.SchoolId"></select>
+            </div>
         </div>
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" >Create Teacher</button>
+
+    <div class="modal-footer" style="border-top: 1px solid rgba(231, 111, 81, 0.15);">
+        <button type="button" class="btn btn-light fw-bold text-muted border" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn fw-bold text-white shadow-sm" style="background-color: #E76F51; border-radius: 8px;">Create Teacher</button>
     </div>
 </form>

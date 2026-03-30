@@ -1,57 +1,128 @@
-﻿@using Classio.ViewModels
+@using Classio.ViewModels
 @model AdminDashboardViewModel
 
 @{
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<div class="container">
-    <h1>Admin Dashboard</h1>
-    <p class="text-muted">Welcome back, Admin.</p>
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0" style="color: #E76F51;">Admin Dashboard</h2>
+            <p class="text-muted">Welcome back, Admin. Here is your school overview.</p>
+        </div>
+    </div>
 
-    <div class="dashboard-grid" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
-
-        <div class="card" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <h3 style="color: #1D3557">Students</h3>
-            <p style="font-size: 2rem; font-weight: bold; color: #1D3557;">@Model.StudentsCount</p>
-            <a asp-area="Admin" asp-controller="Students" asp-action="Index" style="cursor:pointer; display:inline-block; margin-top:10px;">
-                Manage
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+            <a asp-area="Admin" asp-controller="Students" asp-action="Index" class="text-decoration-none">
+                <div class="glass-card-light h-100 p-4 d-flex flex-column border-0 shadow-sm hover-zoom">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-white rounded-circle d-flex justify-content-center align-items-center shadow-sm me-3" style="width: 50px; height: 50px; border: 2px solid #F4A261;">
+                            <i class="bi bi-mortarboard-fill fs-3" style="color: #E76F51;"></i>
+                        </div>
+                        <h4 class="fw-bold mb-0" style="color: #333;">Students</h4>
+                    </div>
+                    <div class="p-3 rounded text-center flex-grow-1" style="background: rgba(244, 162, 97, 0.1);">
+                        <h2 class="display-5 fw-bold mb-0" style="color: #E76F51;">@Model.StudentsCount</h2>
+                        <small class="text-muted">Registered</small>
+                    </div>
+                    <div class="text-center mt-3">
+                        <span class="btn btn-outline-custom rounded-pill fw-bold px-4">Manage <i class="bi bi-arrow-right ms-1"></i></span>
+                    </div>
+                </div>
             </a>
         </div>
 
-        <div class="card" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <h3 style="color: #4A148C">Teachers</h3>
-            <p style="font-size: 2rem; font-weight: bold; color: #4A148C;">@Model.TeachersCount</p>
-            <a asp-area="Admin" asp-controller="Teachers" asp-action="Index" style="cursor:pointer; display:inline-block; margin-top:10px;">
-                Manage
+        <div class="col-md-6 col-lg-4">
+            <a asp-area="Admin" asp-controller="Teachers" asp-action="Index" class="text-decoration-none">
+                <div class="glass-card-light h-100 p-4 d-flex flex-column border-0 shadow-sm hover-zoom">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-white rounded-circle d-flex justify-content-center align-items-center shadow-sm me-3" style="width: 50px; height: 50px; border: 2px solid #F4A261;">
+                            <i class="bi bi-person-workspace fs-3" style="color: #E76F51;"></i>
+                        </div>
+                        <h4 class="fw-bold mb-0" style="color: #333;">Teachers</h4>
+                    </div>
+                    <div class="p-3 rounded text-center flex-grow-1" style="background: rgba(244, 162, 97, 0.1);">
+                        <h2 class="display-5 fw-bold mb-0" style="color: #E76F51;">@Model.TeachersCount</h2>
+                        <small class="text-muted">Registered</small>
+                    </div>
+                    <div class="text-center mt-3">
+                        <span class="btn btn-outline-custom rounded-pill fw-bold px-4">Manage <i class="bi bi-arrow-right ms-1"></i></span>
+                    </div>
+                </div>
             </a>
         </div>
 
-        <div class="card" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <h3 style="color: #2A9D8F">Parents</h3>
-            <p style="font-size: 2rem; font-weight: bold; color: #2A9D8F;">@Model.ParentsCount</p>
-            <a asp-area="Admin" asp-controller="Parents" asp-action="Index" style="cursor:pointer; display:inline-block; margin-top:10px;">
-                Manage
+        <div class="col-md-6 col-lg-4">
+            <a asp-area="Admin" asp-controller="Parents" asp-action="Index" class="text-decoration-none">
+                <div class="glass-card-light h-100 p-4 d-flex flex-column border-0 shadow-sm hover-zoom">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-white rounded-circle d-flex justify-content-center align-items-center shadow-sm me-3" style="width: 50px; height: 50px; border: 2px solid #F4A261;">
+                            <i class="bi bi-people-fill fs-3" style="color: #E76F51;"></i>
+                        </div>
+                        <h4 class="fw-bold mb-0" style="color: #333;">Parents</h4>
+                    </div>
+                    <div class="p-3 rounded text-center flex-grow-1" style="background: rgba(244, 162, 97, 0.1);">
+                        <h2 class="display-5 fw-bold mb-0" style="color: #E76F51;">@Model.ParentsCount</h2>
+                        <small class="text-muted">Registered</small>
+                    </div>
+                    <div class="text-center mt-3">
+                        <span class="btn btn-outline-custom rounded-pill fw-bold px-4">Manage <i class="bi bi-arrow-right ms-1"></i></span>
+                    </div>
+                </div>
             </a>
         </div>
 
-        <div class="card" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <h3>Classes</h3>
-            <p style="font-size: 2rem; font-weight: bold; color: #F4A261;">@Model.ClassesCount</p>
-            <a asp-area="Admin" asp-controller="Classes" asp-action="Index" style="cursor:pointer; display:inline-block; margin-top:10px;">
-                Manage
+        <div class="col-md-6 col-lg-4">
+            <a asp-area="Admin" asp-controller="Classes" asp-action="Index" class="text-decoration-none">
+                <div class="glass-card-light h-100 p-4 d-flex flex-column border-0 shadow-sm hover-zoom">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-white rounded-circle d-flex justify-content-center align-items-center shadow-sm me-3" style="width: 50px; height: 50px; border: 2px solid #F4A261;">
+                            <i class="bi bi-collection-fill fs-3" style="color: #E76F51;"></i>
+                        </div>
+                        <h4 class="fw-bold mb-0" style="color: #333;">Classes</h4>
+                    </div>
+                    <div class="p-3 rounded text-center flex-grow-1" style="background: rgba(231, 111, 81, 0.1);">
+                        <h2 class="display-5 fw-bold mb-0" style="color: #E76F51;">@Model.ClassesCount</h2>
+                        <small class="text-muted">Active</small>
+                    </div>
+                    <div class="text-center mt-3">
+                        <span class="btn btn-outline-custom rounded-pill fw-bold px-4">Manage <i class="bi bi-arrow-right ms-1"></i></span>
+                    </div>
+                </div>
             </a>
         </div>
-        <div class="card" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <h3>Schedules</h3>
-            <p style="font-size: 2rem; font-weight: bold; color: #F4A261;">@Model.ClassesCount</p>
 
-            <a asp-area="Admin" asp-controller="Schedule" asp-action="Index" style="cursor:pointer; display:inline-block; margin-top:10px;">
-                Manage
+        <div class="col-md-6 col-lg-4">
+            <a asp-area="Admin" asp-controller="Schedule" asp-action="Index" class="text-decoration-none">
+                <div class="glass-card-light h-100 p-4 d-flex flex-column border-0 shadow-sm hover-zoom">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-white rounded-circle d-flex justify-content-center align-items-center shadow-sm me-3" style="width: 50px; height: 50px; border: 2px solid #F4A261;">
+                            <i class="bi bi-calendar-week-fill fs-3" style="color: #E76F51;"></i>
+                        </div>
+                        <h4 class="fw-bold mb-0" style="color: #333;">Schedules</h4>
+                    </div>
+                    <div class="p-3 rounded text-center flex-grow-1" style="background: rgba(231, 111, 81, 0.1);">
+                        <h2 class="display-5 fw-bold mb-0" style="color: #E76F51;">@Model.ClassesCount</h2>
+                        <small class="text-muted">Class Schedules</small>
+                    </div>
+                    <div class="text-center mt-3">
+                        <span class="btn btn-outline-custom rounded-pill fw-bold px-4">Manage <i class="bi bi-arrow-right ms-1"></i></span>
+                    </div>
+                </div>
             </a>
         </div>
-
     </div>
 </div>
-    </div>
-</div>
+
+<style>
+    .hover-zoom {
+        transition: transform 0.2s ease-in-out;
+        cursor: pointer;
+    }
+    .hover-zoom:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+    }
+</style>

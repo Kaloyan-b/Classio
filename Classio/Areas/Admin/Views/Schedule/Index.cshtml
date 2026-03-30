@@ -1,50 +1,59 @@
-﻿@model IEnumerable<Classio.Models.Class>
+@model IEnumerable<Classio.Models.Class>
 
 @{
-    ViewData["Title"] = "Select Class for Scheduling";
+    ViewData["Title"] = "Manage Schedules";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Manage Schedules</h2>
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0" style="color: #E76F51;">Manage Schedules</h2>
+            <p class="text-muted">Select a class below to edit its weekly schedule.</p>
+        </div>
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <p class="text-muted">Select a class below to edit its weekly schedule.</p>
-
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
+    <div class="glass-card-light border-0 shadow-sm overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle" style="background: transparent;">
+                <thead style="background: rgba(231, 111, 81, 0.05);">
                     <tr>
-                        <th>ID</th>
-                        <th>Class Name</th>
-                        <th class="text-end">Actions</th>
+                        <th class="py-3 px-4 fw-bold" style="color: #264653;">Class</th>
+                        <th class="py-3 px-4 fw-bold text-end" style="color: #264653;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @if (!Model.Any())
                     {
                         <tr>
-                            <td>@item.Id</td>
-                            <td class="fw-bold">@item.Name</td>
-                            <td class="text-end">
-                                <a asp-action="Manage"
-                                   asp-route-id="@item.Id"
-                                   class="btn btn-sm btn-primary">
-                                    <i class="bi bi-calendar-week"></i> Edit Schedule
-                                </a>
+                            <td colspan="2" class="text-center py-5 text-muted">
+                                No classes found. Please create a class first.
                             </td>
                         </tr>
                     }
+                    else
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                                <td class="py-3 px-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-white rounded-circle d-flex justify-content-center align-items-center shadow-sm me-3" style="width: 40px; height: 40px; border: 2px solid #F4A261;">
+                                            <i class="bi bi-calendar-week" style="color: #E76F51;"></i>
+                                        </div>
+                                        <span class="fw-bold" style="color: #333;">@item.Name</span>
+                                    </div>
+                                </td>
+                                <td class="py-3 px-4 text-end">
+                                    <a asp-action="Manage" asp-route-id="@item.Id"
+                                       class="btn btn-sm fw-bold px-3 py-1 shadow-sm" style="background-color: #F4A261; color: white; border-radius: 8px;">
+                                        <i class="bi bi-calendar-week me-1"></i> Edit Schedule
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
                 </tbody>
             </table>
-
-            @if (!Model.Any())
-            {
-                <div class="alert alert-warning text-center mt-3">
-                    No classes found. Please create a class first.
-                </div>
-            }
         </div>
     </div>
 </div>
