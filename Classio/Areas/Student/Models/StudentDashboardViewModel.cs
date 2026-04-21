@@ -64,4 +64,25 @@ namespace Classio.Areas.Student.Models
         public AttendanceState State { get; set; }
         public double Weight => State == AttendanceState.Late ? 0.5 : 1.0;
     }
+
+    public class StudentScheduleViewModel
+    {
+        // Ordered list of class periods (non-break)
+        public List<ClassPeriod> Periods { get; set; } = new();
+        // day -> periodId -> slot (null if no class)
+        public Dictionary<DayOfWeek, Dictionary<int, ScheduleSlotInfo?>> Slots { get; set; } = new();
+        public List<DayOfWeek> Days { get; } = new()
+        {
+            DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday,
+            DayOfWeek.Thursday, DayOfWeek.Friday
+        };
+    }
+
+    public class ScheduleSlotInfo
+    {
+        public string SubjectName { get; set; }
+        public string TeacherName { get; set; }
+        public string StartTime { get; set; }
+        public string EndTime { get; set; }
+    }
 }

@@ -64,7 +64,7 @@ namespace Classio.Areas.Parent.Controllers
                 .Include(s => s.Absences)
                 .FirstOrDefaultAsync(s => s.Id == studentId);
 
-            // Reusing your exact Student logic
+            // Reusing student logic
             double overallAvg = student.Grades.Any() ? Math.Round(student.Grades.Average(g => g.Value), 2) : 0;
             var allStudents = await _context.Students.Include(s => s.Grades).ToListAsync();
             var rankedList = allStudents.Select(s => new { StudentId = s.Id, Gpa = s.Grades.Any() ? s.Grades.Average(g => g.Value) : 0 })
@@ -87,7 +87,6 @@ namespace Classio.Areas.Parent.Controllers
             return View(model);
         }
 
-        // 3. CHILD'S GRADES (Mirrors Student's Grades)
         public async Task<IActionResult> ChildGrades(int studentId)
         {
             var userId = _userManager.GetUserId(User);

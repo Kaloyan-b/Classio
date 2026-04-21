@@ -16,9 +16,11 @@
         </button> *@
     </div>
 
+    <partial name="_SearchBar" model="@("Search by name, email, class...")" />
+
     <div class="glass-card-light border-0 shadow-sm overflow-hidden">
         <div class="table-responsive">
-            <table class="table table-hover mb-0 align-middle" style="background: transparent;">
+            <table class="table table-hover mb-0 align-middle" data-searchable="true" style="background: transparent;">
                 <thead style="background: rgba(231, 111, 81, 0.05);">
                     <tr>
                         <th class="py-3 px-4 fw-bold" style="color: #264653;">Name</th>
@@ -130,6 +132,7 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/admin-search.js"></script>
     <script>
         function loadModal(url, targetId) {
             $('#' + targetId).html('<div class="modal-body text-center py-4"><div class="spinner-border" style="color: #E76F51;"></div></div>');

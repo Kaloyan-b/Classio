@@ -1,0 +1,17 @@
+@*
+    Usage: <partial name="_SearchBar" model="@("placeholder text")" />
+    The table to filter must have data-searchable="true" on it.
+*@
+@model string
+
+<div class="input-group mb-3" style="max-width: 340px;">
+    <span class="input-group-text border-0 bg-white shadow-sm" style="border-radius: 8px 0 0 8px;">
+        <i class="bi bi-search" style="color: #E76F51;"></i>
+    </span>
+    <input type="text"
+           id="adminSearchInput"
+           class="form-control border-0 shadow-sm"
+           placeholder="@(Model ?? "Search...")"
+           autocomplete="off"
+           style="border-radius: 0 8px 8px 0;" />
+</div>

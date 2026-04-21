@@ -105,6 +105,57 @@ namespace Classio.Areas.Student.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> Schedule()
+        {
+            var userId = _userManager.GetUserId(User);
+            var student = await _context.Students
+                .FirstOrDefaultAsync(s => s.UserId == userId);
+
+            if (student == null) return NotFound();
+
+            var periods = await _context.ClassPeriods
+                .Where(p => !p.IsBreak)
+                .OrderBy(p => p.Order)
+                .ToListAsync();
+
+            var slots = await _context.ScheduleSlots
+                .Include(s => s.Subject)
+                .Include(s => s.Teacher)
+                .Include(s => s.ClassPeriod)
+                .Where(s => s.ClassId == student.ClassId)
+                .ToListAsync();
+
+            var days = new[] {
+                DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday,
+                DayOfWeek.Thursday, DayOfWeek.Friday
+            };
+
+            var slotMap = days.ToDictionary(
+                day => day,
+                day => periods.ToDictionary(
+                    p => p.Id,
+                    p => slots
+                        .Where(s => s.DayOfWeek == day && s.ClassPeriodId == p.Id)
+                        .Select(s => new ScheduleSlotInfo
+                        {
+                            SubjectName = s.Subject.Name,
+                            TeacherName = $"{s.Teacher.FirstName} {s.Teacher.LastName}",
+                            StartTime = s.ClassPeriod.StartTime.ToString(@"hh\:mm"),
+                            EndTime = s.ClassPeriod.EndTime.ToString(@"hh\:mm")
+                        })
+                        .FirstOrDefault()
+                )
+            );
+
+            var model = new StudentScheduleViewModel
+            {
+                Periods = periods,
+                Slots = slotMap
+            };
+
+            return View(model);
+        }
+
         public async Task<IActionResult> Attendance()
         {
             var userId = _userManager.GetUserId(User);

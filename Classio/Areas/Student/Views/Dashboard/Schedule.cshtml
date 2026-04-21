@@ -1,0 +1,111 @@
+@model Classio.Areas.Student.Models.StudentScheduleViewModel
+
+@{
+    ViewData["Title"] = "My Schedule";
+    var dayNames = new Dictionary<DayOfWeek, string>
+    {
+        [DayOfWeek.Monday]    = "Monday",
+        [DayOfWeek.Tuesday]   = "Tuesday",
+        [DayOfWeek.Wednesday] = "Wednesday",
+        [DayOfWeek.Thursday]  = "Thursday",
+        [DayOfWeek.Friday]    = "Friday"
+    };
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0" style="color: #E76F51;">
+                <i class="bi bi-calendar3 me-2"></i>My Schedule
+            </h2>
+            <p class="text-muted mb-0">Weekly class timetable</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+            <i class="bi bi-arrow-left me-1"></i> Back
+        </a>
+    </div>
+
+    @if (!Model.Periods.Any())
+    {
+        <div class="glass-card-light p-5 text-center shadow-sm border-0">
+            <i class="bi bi-calendar-x display-1 mb-3 opacity-50" style="color: #F4A261;"></i>
+            <h3 class="fw-bold" style="color: #333;">No schedule found</h3>
+            <p class="text-muted">Your timetable hasn't been set up yet. Check back later.</p>
+        </div>
+    }
+    else
+    {
+        <div class="glass-card-light shadow-sm border-0 p-0 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-bordered mb-0 schedule-table">
+                    <thead>
+                        <tr>
+                            <th class="period-col text-center align-middle py-3" style="background:#264653; color:#fff; width:120px;">
+                                <i class="bi bi-clock me-1"></i>Period
+                            </th>
+                            @foreach (var day in Model.Days)
+                            {
+                                <th class="text-center align-middle py-3" style="background:#264653; color:#fff;">
+                                    @dayNames[day]
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var period in Model.Periods)
+                        {
+                            <tr>
+                                <td class="text-center align-middle period-time py-3" style="background:rgba(38,70,83,0.05);">
+                                    <div class="fw-semibold" style="color:#264653;">@period.Name</div>
+                                    <small class="text-muted">
+                                        @period.StartTime.ToString(@"hh\:mm") – @period.EndTime.ToString(@"hh\:mm")
+                                    </small>
+                                </td>
+                                @foreach (var day in Model.Days)
+                                {
+                                    var slot = Model.Slots[day][period.Id];
+                                    <td class="align-middle p-2 text-center">
+                                        @if (slot != null)
+                                        {
+                                            <div class="slot-card mx-auto p-2 rounded-3">
+                                                <div class="fw-semibold" style="color:#264653;">@slot.SubjectName</div>
+                                                <small class="text-muted">
+                                                    <i class="bi bi-person me-1"></i>@slot.TeacherName
+                                                </small>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted opacity-25">—</span>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .schedule-table th, .schedule-table td {
+        border-color: rgba(38, 70, 83, 0.12) !important;
+    }
+
+    .slot-card {
+        background: rgba(244, 162, 97, 0.12);
+        border: 1px solid rgba(244, 162, 97, 0.3);
+        max-width: 160px;
+        transition: background 0.2s;
+    }
+
+        .slot-card:hover {
+            background: rgba(244, 162, 97, 0.22);
+        }
+
+    .period-col {
+        min-width: 110px;
+    }
+</style>

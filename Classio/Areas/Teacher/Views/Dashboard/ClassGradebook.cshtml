@@ -17,14 +17,9 @@
                 {
                     var val = $"{session.Date:yyyy-MM-dd}_{session.PeriodId}";
                     var isSelected = session.Date == Model.SelectedDate && session.PeriodId == Model.SelectedPeriodId;
+                    var label = session.IsCurrent ? $"🔴 LIVE — {session.Label}" : session.Label;
 
-                    <option value="@val" selected="@isSelected">
-                        @if (session.IsCurrent)
-                        {
-                            <span>🔴 (LIVE) </span>
-                        }
-                        @session.Label
-                    </option>
+                    <option value="@val" selected="@(isSelected ? "selected" : null)">@label</option>
                 }
             </select>
         </div>

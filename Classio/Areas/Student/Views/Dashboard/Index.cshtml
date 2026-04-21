@@ -1,48 +1,68 @@
-﻿@model Classio.Areas.Student.Models.StudentDashboardViewModel
+@model Classio.Areas.Student.Models.StudentDashboardViewModel
 
 @{
     ViewData["Title"] = "My Dashboard";
 }
 
-<div class="container py-4">
-    <h2 class="mb-4">Welcome, @Model.StudentName!</h2>
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0" style="color: #E76F51;">Welcome, @Model.StudentName!</h2>
+            <p class="text-muted mb-0">Your academic overview</p>
+        </div>
+    </div>
 
-    <div class="row g-3">
-
+    <div class="row g-4">
         <div class="col-md-4">
             <a asp-action="Grades" class="text-decoration-none">
-                <div class="card h-100 border-0 shadow-sm text-white hover-zoom" style="background-color: #0d6efd;">
-                    <div class="card-body text-center py-4">
-                        <i class="bi bi-mortarboard fs-1"></i>
-                        <h3 class="display-5 fw-bold mt-2">@Model.OverallAverage.ToString("0.00")</h3>
-                        <p class="mb-0 fs-6 opacity-75">Overall Average</p>
+                <div class="glass-card-light h-100 p-4 text-center border-0 shadow-sm hover-zoom">
+                    <div class="rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width: 60px; height: 60px; background: rgba(244, 162, 97, 0.15);">
+                        <i class="bi bi-mortarboard fs-2" style="color: #F4A261;"></i>
                     </div>
+                    <h3 class="display-5 fw-bold" style="color: #264653;">@Model.OverallAverage.ToString("0.00")</h3>
+                    <p class="text-muted mb-0">Overall Average</p>
                 </div>
             </a>
         </div>
 
         <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm text-white hover-zoom" style="background-color: #6f42c1;">
-                <div class="card-body text-center py-4">
-                    <i class="bi bi-trophy fs-1"></i>
-                    <h3 class="display-5 fw-bold mt-2">@Model.FormattedRank</h3>
-                    <p class="mb-0 fs-6 opacity-75">Out of @Model.TotalStudents Students</p>
+            <div class="glass-card-light h-100 p-4 text-center border-0 shadow-sm">
+                <div class="rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width: 60px; height: 60px; background: rgba(42, 157, 143, 0.15);">
+                    <i class="bi bi-trophy fs-2" style="color: #2A9D8F;"></i>
                 </div>
+                <h3 class="display-5 fw-bold" style="color: #264653;">@Model.FormattedRank</h3>
+                <p class="text-muted mb-0">Out of @Model.TotalStudents Students</p>
             </div>
         </div>
 
         <div class="col-md-4">
             <a asp-action="Attendance" class="text-decoration-none">
-                <div class="card h-100 border-0 shadow-sm text-white hover-zoom" style="background-color: #dc3545;">
-                    <div class="card-body text-center py-4">
-                        <i class="bi bi-calendar-x fs-1"></i>
-                        <h3 class="display-5 fw-bold mt-2">@Model.WeightedAbsences</h3>
-                        <p class="mb-0 fs-6 opacity-75">Weighted Absences</p>
+                <div class="glass-card-light h-100 p-4 text-center border-0 shadow-sm hover-zoom">
+                    <div class="rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width: 60px; height: 60px; background: rgba(231, 111, 81, 0.15);">
+                        <i class="bi bi-calendar-x fs-2" style="color: #E76F51;"></i>
                     </div>
+                    <h3 class="display-5 fw-bold" style="color: #264653;">@Model.WeightedAbsences</h3>
+                    <p class="text-muted mb-0">Weighted Absences</p>
                 </div>
             </a>
         </div>
+    </div>
 
+    <div class="row g-4 mt-1">
+        <div class="col-12">
+            <a asp-action="Schedule" class="text-decoration-none">
+                <div class="glass-card-light p-4 border-0 shadow-sm hover-zoom d-flex align-items-center gap-3">
+                    <div class="rounded-circle d-inline-flex justify-content-center align-items-center flex-shrink-0" style="width: 52px; height: 52px; background: rgba(42, 157, 143, 0.15);">
+                        <i class="bi bi-calendar3 fs-4" style="color: #2A9D8F;"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-0" style="color: #264653;">My Schedule</h5>
+                        <p class="text-muted mb-0 small">View your weekly timetable</p>
+                    </div>
+                    <i class="bi bi-chevron-right ms-auto" style="color: #2A9D8F;"></i>
+                </div>
+            </a>
+        </div>
     </div>
 </div>
 
@@ -54,6 +74,6 @@
 
         .hover-zoom:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12) !important;
         }
 </style>
