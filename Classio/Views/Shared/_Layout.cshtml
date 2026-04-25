@@ -497,10 +497,11 @@
             </div>
             <button class="chat-panel-close" id="chatPanelClose"><i class="bi bi-x"></i></button>
         </div>
+        <partial name="_SearchBar" model="@("Search by name...")" />
         <div class="chat-contacts-section">
             <p class="chat-contacts-label">Contacts</p>
             <div id="contactListArea">
-                <span style="font-size:0.75rem;color:#CCC;">Loading...</span>
+                <span style="font-size:0.75rem;color:#CCC;" data-searchable="true">Loading...</span>
             </div>
         </div>
         <div id="chatMessages">
@@ -682,7 +683,49 @@
                 .catch(err => console.error("Could not load contacts", err));
         }
 
-        document.addEventListener("DOMContentLoaded", loadContacts);
+        function setupChatContactSearch() {
+            const input = document.getElementById("adminSearchInput");
+            const contactArea = document.getElementById("contactListArea");
+            if (!input || !contactArea) return;
+
+            let noResultsHint = null;
+            const ensureHint = () => {
+                if (!noResultsHint) {
+                    noResultsHint = document.createElement("span");
+                    noResultsHint.className = "no-search-results-chat";
+                    noResultsHint.style.fontSize = "0.75rem";
+                    noResultsHint.style.color = "#CCC";
+                    noResultsHint.textContent = "No contacts match your search.";
+                    contactArea.appendChild(noResultsHint);
+                }
+            };
+
+            input.addEventListener("input", function () {
+                const term = this.value.trim().toLowerCase();
+                const buttons = contactArea.querySelectorAll(".chat-contact-btn");
+                let anyVisible = false;
+
+                buttons.forEach(function (btn) {
+                    const text = btn.textContent.toLowerCase();
+                    const match = term === '' || text.includes(term);
+                    btn.style.display = match ? '' : 'none';
+                    if (match) anyVisible = true;
+                });
+
+                if (term === '') {
+                    if (noResultsHint) noResultsHint.style.display = 'none';
+                    return;
+                }
+
+                ensureHint();
+                noResultsHint.style.display = anyVisible ? 'none' : '';
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            loadContacts();
+            setupChatContactSearch();
+        });
     </script>
 </body>
 </html>
