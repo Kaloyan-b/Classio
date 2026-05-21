@@ -590,9 +590,17 @@
         // ── SignalR ────────────────────────────────────────────
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/chatHub")
+            .withAutomaticReconnect()
             .build();
 
         document.getElementById("sendButton").disabled = true;
+
+        connection.onreconnected(() => {
+            document.getElementById("sendButton").disabled = false;
+        });
+        connection.onclose(() => {
+            document.getElementById("sendButton").disabled = true;
+        });
 
         connection.start().then(function () {
             document.getElementById("sendButton").disabled = false;

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.DataProtection;
 using Classio.Data;
 using Classio.Models;
 
@@ -18,6 +19,9 @@ public class Program
 
         builder.Services.AddDbContext<ClassioDbContext>(options =>
             options.UseNpgsql(connectionString));
+
+        builder.Services.AddDataProtection()
+            .PersistKeysToDbContext<ClassioDbContext>();
 
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -58,6 +62,7 @@ public class Program
             app.UseHsts();
         }
 
+        app.UseWebSockets();
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 

@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Classio.Models;
-using Classio.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 
 namespace Classio.Data
 {
-    public class ClassioDbContext : IdentityDbContext<User>
+    public class ClassioDbContext : IdentityDbContext<User>, IDataProtectionKeyContext
     {
         public ClassioDbContext(DbContextOptions<ClassioDbContext> options) : base(options)
         {
@@ -23,6 +23,7 @@ namespace Classio.Data
         public DbSet<ClassPeriod> ClassPeriods { get; set; } = null!;
         public DbSet<ScheduleSlot> ScheduleSlots { get; set; } = null!;
         public DbSet<ChatMessage> ChatMessages { get; set; }
+        public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
