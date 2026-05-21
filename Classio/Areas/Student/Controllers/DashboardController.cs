@@ -1,6 +1,7 @@
 ﻿using Classio.Areas.Student.Models;
 using Classio.Areas.Teacher.Models;
 using Classio.Data;
+using Classio.Helpers;
 using Classio.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -156,20 +157,36 @@ namespace Classio.Areas.Student.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> ExportSchedule()
+        {
+            var userId = _userManager.GetUserId(User);
+            var student = await _context.Students
+                .FirstOrDefaultAsync(s => s.UserId == userId);
+
+            if (student == null) return NotFound();
+
+            var slots = await _context.ScheduleSlots
+                .Include(s => s.ClassPeriod)
+                .Include(s => s.Subject)
+                .Include(s => s.Teacher)
+                .Where(s => s.ClassId == student.ClassId)
+                .ToListAsync();
+
+            var entries = slots.Select(s => new IcsBuilder.ScheduleEntry(
+                Day: s.DayOfWeek,
+                StartTime: s.ClassPeriod.StartTime,
+                EndTime: s.ClassPeriod.EndTime,
+                Summary: s.Subject.Name,
+                Description: $"Teacher: {s.Teacher.FirstName} {s.Teacher.LastName}"
+            ));
+
+            var ics = IcsBuilder.Build(entries, $"Classio Schedule – {student.FirstName} {student.LastName}");
+            return File(ics, "text/calendar", "classio-schedule.ics");
+        }
+
         public async Task<IActionResult> Attendance()
         {
             var userId = _userManager.GetUserId(User);
-            //Unassigned absence weight fix
-            var brokenAbsences = await _context.Absences.Where(a => (int)a.AttendanceState == 0).ToListAsync();
-            if (brokenAbsences.Any())
-            {
-                var rand = new Random();
-                foreach (var a in brokenAbsences)
-                {
-                    a.AttendanceState = rand.NextDouble() > 0.3 ? AttendanceState.Absent : AttendanceState.Late;
-                }
-                await _context.SaveChangesAsync();
-            }
 
             var student = await _context.Students
                 .Include(s => s.Absences)
@@ -178,16 +195,25 @@ namespace Classio.Areas.Student.Controllers
 
             if (student == null) return NotFound();
 
+            var scheduleSlots = await _context.ScheduleSlots
+                .Include(s => s.Teacher)
+                .Where(s => s.ClassId == student.ClassId)
+                .ToListAsync();
+
+            var subjectTeacherMap = scheduleSlots
+                .GroupBy(s => s.SubjectId)
+                .ToDictionary(g => g.Key, g => $"{g.First().Teacher.FirstName} {g.First().Teacher.LastName}");
+
             var model = new StudentAttendanceViewModel
             {
-                TotalWeightedAbsences = student.Absences.Count(a => a.AttendanceState != AttendanceState.Late) * 1.0
+                TotalWeightedAbsences = student.Absences.Count(a => a.AttendanceState == AttendanceState.Absent) * 1.0
                                       + student.Absences.Count(a => a.AttendanceState == AttendanceState.Late) * 0.5,
 
                 Absences = student.Absences.Select(a => new AbsenceDetail
                 {
                     Date = a.Date,
                     SubjectName = a.Subject?.Name ?? "Unknown Subject",
-                    TeacherName = "Assigned Teacher",
+                    TeacherName = subjectTeacherMap.TryGetValue(a.SubjectId, out var name) ? name : "Unknown Teacher",
                     State = a.AttendanceState,
                 }).OrderByDescending(a => a.Date).ToList()
             };

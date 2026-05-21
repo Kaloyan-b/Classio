@@ -1,6 +1,7 @@
 using Classio.Models;
 using Classio.Areas.Teacher.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using TeacherAttendanceState = Classio.Areas.Teacher.Models.AttendanceState;
 
 namespace Classio.Data
@@ -9,6 +10,8 @@ namespace Classio.Data
     {
         public static void Initialize(ClassioDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
+            context.Database.Migrate();
+
             // ── Roles ─────────────────────────────────────────────────────────────
             foreach (var role in new[] { "Admin", "Student", "Parent", "Teacher" })
             {

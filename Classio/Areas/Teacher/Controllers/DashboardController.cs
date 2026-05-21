@@ -1,6 +1,6 @@
 ﻿using Classio.Areas.Teacher.Models;
-using Classio.Models;
 using Classio.Data;
+using Classio.Helpers;
 using Classio.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -40,6 +40,86 @@ namespace Classio.Areas.Teacher.Controllers
             }
 
             return View(teacher);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Schedule()
+        {
+            var userId = _userManager.GetUserId(User);
+            var teacher = await _context.Teachers
+                .Include(t => t.Subject)
+                .FirstOrDefaultAsync(t => t.UserId == userId);
+
+            if (teacher == null) return Forbid();
+
+            var slots = await _context.ScheduleSlots
+                .Include(s => s.ClassPeriod)
+                .Include(s => s.Subject)
+                .Include(s => s.SchoolClass)
+                .Where(s => s.TeacherId == teacher.Id)
+                .OrderBy(s => s.DayOfWeek).ThenBy(s => s.ClassPeriod.Order)
+                .ToListAsync();
+
+            var periods = await _context.ClassPeriods
+                .Where(p => !p.IsBreak)
+                .OrderBy(p => p.Order)
+                .ToListAsync();
+
+            var days = new[] {
+                DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday,
+                DayOfWeek.Thursday, DayOfWeek.Friday
+            };
+
+            var slotMap = days.ToDictionary(
+                day => day,
+                day => periods.ToDictionary(
+                    p => p.Id,
+                    p => slots
+                        .Where(s => s.DayOfWeek == day && s.ClassPeriodId == p.Id)
+                        .Select(s => new TeacherScheduleSlotInfo
+                        {
+                            ClassName = s.SchoolClass?.Name ?? "—",
+                            SubjectName = s.Subject.Name,
+                            StartTime = s.ClassPeriod.StartTime.ToString(@"hh\:mm"),
+                            EndTime = s.ClassPeriod.EndTime.ToString(@"hh\:mm")
+                        })
+                        .FirstOrDefault()
+                )
+            );
+
+            ViewBag.Periods = periods;
+            ViewBag.Days = days;
+            ViewBag.Slots = slotMap;
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ExportSchedule()
+        {
+            var userId = _userManager.GetUserId(User);
+            var teacher = await _context.Teachers
+                .Include(t => t.Subject)
+                .FirstOrDefaultAsync(t => t.UserId == userId);
+
+            if (teacher == null) return Forbid();
+
+            var slots = await _context.ScheduleSlots
+                .Include(s => s.ClassPeriod)
+                .Include(s => s.Subject)
+                .Include(s => s.SchoolClass)
+                .Where(s => s.TeacherId == teacher.Id)
+                .ToListAsync();
+
+            var entries = slots.Select(s => new IcsBuilder.ScheduleEntry(
+                Day: s.DayOfWeek,
+                StartTime: s.ClassPeriod.StartTime,
+                EndTime: s.ClassPeriod.EndTime,
+                Summary: $"{s.Subject.Name} – {s.SchoolClass?.Name}",
+                Description: $"Subject: {s.Subject.Name}\\nClass: {s.SchoolClass?.Name}"
+            ));
+
+            var ics = IcsBuilder.Build(entries, $"Classio Schedule – {teacher.FirstName} {teacher.LastName}");
+            return File(ics, "text/calendar", "classio-schedule.ics");
         }
 
         [HttpGet]

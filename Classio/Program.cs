@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Classio.Data;
 using Classio.Models;
 
+
 namespace Classio;
 
 public class Program
@@ -16,7 +17,7 @@ public class Program
             ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
         builder.Services.AddDbContext<ClassioDbContext>(options =>
-            options.UseSqlServer(connectionString));
+            options.UseNpgsql(connectionString));
 
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

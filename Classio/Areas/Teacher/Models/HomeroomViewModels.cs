@@ -79,4 +79,12 @@ namespace Classio.Areas.Teacher.Models
         public string Name { get; set; }
         public int SubjectId { get; set; }
     }
+
+    public class TeacherScheduleSlotInfo
+    {
+        public string ClassName { get; set; }
+        public string SubjectName { get; set; }
+        public string StartTime { get; set; }
+        public string EndTime { get; set; }
+    }
 }

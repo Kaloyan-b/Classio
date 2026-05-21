@@ -21,7 +21,6 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Classio.Data;
-using SQLitePCL;
 
 namespace Classio.Areas.Identity.Pages.Account
 {
