@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
-using Classio.Data; 
+using Classio.Data;
 using Classio.Models;
 
 namespace Classio.Hubs
 {
+    [Authorize]
     public class ChatHub : Hub
     {
         private readonly ClassioDbContext _context;
