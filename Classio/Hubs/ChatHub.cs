@@ -29,8 +29,15 @@ namespace Classio.Hubs
                 Timestamp = DateTime.Now
             };
 
-            _context.ChatMessages.Add(chatMessage);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.ChatMessages.Add(chatMessage);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new HubException($"Save failed: {ex.Message} | Inner: {ex.InnerException?.Message}");
+            }
 
             await Clients.User(receiverId).SendAsync("ReceivePrivateMessage", senderId, message);
         }
