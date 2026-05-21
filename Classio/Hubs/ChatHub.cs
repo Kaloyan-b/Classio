@@ -18,23 +18,21 @@ namespace Classio.Hubs
 
         public async Task SendPrivateMessage(string receiverId, string message)
         {
-            var senderId = Context.UserIdentifier;
+            var senderId = Context.UserIdentifier
+                ?? throw new HubException("User is not authenticated.");
 
-            if (senderId != null)
+            var chatMessage = new ChatMessage
             {
-                var chatMessage = new ChatMessage
-                {
-                    SenderId = senderId,
-                    ReceiverId = receiverId,
-                    Content = message,
-                    Timestamp = DateTime.Now
-                };
+                SenderId = senderId,
+                ReceiverId = receiverId,
+                Content = message,
+                Timestamp = DateTime.Now
+            };
 
-                _context.ChatMessages.Add(chatMessage);
-                await _context.SaveChangesAsync();
+            _context.ChatMessages.Add(chatMessage);
+            await _context.SaveChangesAsync();
 
-                await Clients.User(receiverId).SendAsync("ReceivePrivateMessage", senderId, message);
-            }
+            await Clients.User(receiverId).SendAsync("ReceivePrivateMessage", senderId, message);
         }
     }
 }
