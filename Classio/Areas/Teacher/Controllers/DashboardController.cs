@@ -224,7 +224,7 @@ namespace Classio.Areas.Teacher.Controllers
             var teacher = await _context.Teachers.FirstOrDefaultAsync(t => t.UserId == userId);
             if (teacher == null) return Forbid();
 
-            var sessionDate = model.SelectedDate;
+            var sessionDate = DateTime.SpecifyKind(model.SelectedDate, DateTimeKind.Utc);
 
             foreach (var item in model.Students)
             {
@@ -491,7 +491,7 @@ namespace Classio.Areas.Teacher.Controllers
             {
                 StudentId = StudentId,
                 SubjectId = SubjectId,
-                Date = Date,
+                Date = DateTime.SpecifyKind(Date, DateTimeKind.Utc),
                 AttendanceState = (Classio.Areas.Teacher.Models.AttendanceState)(int)State
             });
             await _context.SaveChangesAsync();

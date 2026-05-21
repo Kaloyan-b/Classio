@@ -27,6 +27,8 @@ namespace Classio.Areas.Admin.Controllers
                 .Include(s => s.User)
                 .Include(s => s.Class)
                 .Include(s => s.School)
+                .Include(s => s.Parent1)
+                .Include(s => s.Parent2)
                 .ToListAsync();
             return View(students);
         }

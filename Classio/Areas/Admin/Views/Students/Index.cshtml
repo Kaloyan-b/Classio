@@ -79,13 +79,13 @@
                                 </td>
 
                                 <td class="py-3 px-4 small text-muted">
-                                    @if (item.Parent1 != null && item.Parent1.User != null)
+                                    @if (item.Parent1 != null)
                                     {
-                                        <div class="mb-1"><i class="bi bi-person-heart me-1" style="color: #F4A261;"></i> @item.Parent1.FirstName @item.Parent1.User.LastName</div>
+                                        <div class="mb-1"><i class="bi bi-person-heart me-1" style="color: #F4A261;"></i> @item.Parent1.FirstName @item.Parent1.LastName</div>
                                     }
-                                    @if (item.Parent2 != null && item.Parent2.User != null)
+                                    @if (item.Parent2 != null)
                                     {
-                                        <div><i class="bi bi-person-heart me-1" style="color: #F4A261;"></i> @item.Parent2.User.FirstName @item.Parent2.User.LastName</div>
+                                        <div><i class="bi bi-person-heart me-1" style="color: #F4A261;"></i> @item.Parent2.FirstName @item.Parent2.LastName</div>
                                     }
                                     @if (item.Parent1 == null && item.Parent2 == null)
                                     {
