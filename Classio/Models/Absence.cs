@@ -9,7 +9,7 @@ namespace Classio.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public DateTime Date { get; set; } = DateTime.Now;
+        public DateTime Date { get; set; } = DateTime.UtcNow;
         public AttendanceState AttendanceState { get; set; } = 0;
         public int StudentId { get; set; }
         [ForeignKey(nameof(StudentId))]

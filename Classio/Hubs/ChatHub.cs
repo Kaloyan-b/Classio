@@ -26,7 +26,7 @@ namespace Classio.Hubs
                 SenderId = senderId,
                 ReceiverId = receiverId,
                 Content = message,
-                Timestamp = DateTime.Now
+                Timestamp = DateTime.UtcNow
             };
 
             try

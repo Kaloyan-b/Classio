@@ -135,7 +135,7 @@ namespace Classio.Data
                         {
                             Value = gradeValues[rand.Next(gradeValues.Length)],
                             Type = gradeTypes[rand.Next(gradeTypes.Length)],
-                            Date = DateTime.Now.AddDays(-rand.Next(1, 120)),
+                            Date = DateTime.UtcNow.AddDays(-rand.Next(1, 120)),
                             StudentId = student.Id,
                             TeacherId = teacher.Id,
                             SubjectId = teacher.SubjectId
@@ -155,7 +155,7 @@ namespace Classio.Data
                     var teacher = teachers[rand.Next(teachers.Count)];
                     absences.Add(new Absence
                     {
-                        Date = DateTime.Now.AddDays(-rand.Next(1, 120)),
+                        Date = DateTime.UtcNow.AddDays(-rand.Next(1, 120)),
                         AttendanceState = rand.Next(2) == 0 ? TeacherAttendanceState.Absent : TeacherAttendanceState.Late,
                         StudentId = student.Id,
                         SubjectId = teacher.SubjectId

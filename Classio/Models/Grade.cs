@@ -12,7 +12,7 @@ namespace Classio.Models
         public double Value { get; set; }
         public GradeType Type { get; set; } = GradeType.Other;
         public string? Description { get; set; }
-        public DateTime Date { get; set; } = DateTime.Now;
+        public DateTime Date { get; set; } = DateTime.UtcNow;
         public int StudentId { get; set; }
         [ForeignKey(nameof(StudentId))]
         

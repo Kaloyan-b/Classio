@@ -273,7 +273,7 @@ namespace Classio.Areas.Teacher.Controllers
                             Value = item.NewGrade.Value,
                             Type = model.BatchGradeType,
                             Description = model.BatchDescription,
-                            Date = DateTime.Now
+                            Date = DateTime.UtcNow
                         };
                         _context.Add(newGrade);
                     }
@@ -418,7 +418,7 @@ namespace Classio.Areas.Teacher.Controllers
                     Value = Value,
                     Type = Type,
                     Description = Description,
-                    Date = DateTime.Now
+                    Date = DateTime.UtcNow
                 });
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Grade added successfully.";
